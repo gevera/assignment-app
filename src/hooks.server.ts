@@ -13,7 +13,7 @@ import {
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const { url, request } = event;
-	const { pathname, search } = url;
+	const { pathname } = url;
 
 	const supportedLocales = locales.get().map((l) => l.toLowerCase());
 	const firstSegment = getFirstPathSegment(pathname);
@@ -27,7 +27,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		lang = preferredLocale(request, supportedLocales);
 	} else {
 		lang = preferredLocale(request, supportedLocales);
-		redirect(307, `/${lang}${pathname === '/' ? '' : pathname}${search}`);
+		redirect(307, `/${lang}${pathname === '/' ? '' : pathname}${url.search}`);
 	}
 
 	return resolve(
@@ -38,7 +38,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 	);
 };
 
-export const handleError: HandleServerError = async ({ event, message }) => {
+export const handleError: HandleServerError = async ({ error, event, message }) => {
+	console.error(error);
+
 	const lang = event.locals.lang ?? defaultLocale;
 
 	await loadTranslations(lang, 'error');
