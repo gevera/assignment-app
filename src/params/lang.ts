@@ -1,4 +1,4 @@
-import { isLocale } from '$lib/routing';
+import { isLocale } from '$lib/i18n';
 
 /**
  * @param {string} param

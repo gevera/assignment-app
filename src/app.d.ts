@@ -2,8 +2,14 @@
 // for information about these interfaces
 declare global {
 	namespace App {
-		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			lang: string;
+		}
+		interface Error {
+			message: string;
+			lang?: string;
+			translations?: Record<string, Record<string, unknown>>;
+		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}

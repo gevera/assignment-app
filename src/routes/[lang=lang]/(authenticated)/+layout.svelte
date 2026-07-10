@@ -1,5 +1,5 @@
 <script lang="ts">
-    let { children } = $props();
+	let { children } = $props();
 </script>
 
 <h1>Dashboard Layout</h1>
