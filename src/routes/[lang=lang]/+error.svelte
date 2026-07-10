@@ -14,4 +14,4 @@
 
 <h1>{page.status}</h1>
 <p>{$t('i18n.common.error')}</p>
-<a href={localizedPath(lang, '')}>{$t('i18n.nav.home')}</a>
+<a href={localizedPath({ lang, path: '' })}>{$t('i18n.nav.home')}</a>

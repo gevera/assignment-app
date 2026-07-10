@@ -10,5 +10,9 @@ export const userSchema = z.object({
 	role: userRoleSchema
 });
 
+/** Authenticated user without password — safe for locals / page data. */
+export const sessionUserSchema = userSchema.omit({ password: true });
+
 export type User = z.infer<typeof userSchema>;
 export type UserRole = z.infer<typeof userRoleSchema>;
+export type SessionUser = z.infer<typeof sessionUserSchema>;

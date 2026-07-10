@@ -8,13 +8,13 @@ export const prerender = true;
 export const entries: EntryGenerator = () => {
 	const posts = getAllPosts();
 
-	return LOCALES.flatMap((lang) => posts.map((post) => ({ lang, slug: post.slug })));
+	return LOCALES.flatMap((lang) => posts.map(({slug}) => ({ lang, slug })));
 };
 
-export const load: PageServerLoad = ({ params, depends }) => {
+export const load: PageServerLoad = ({ params: { slug }, depends }) => {
 	depends('app:posts');
 
-	const post = getPostBySlug(params.slug);
+	const post = getPostBySlug(slug);
 
 	if (!post) {
 		error(404, 'Post not found');

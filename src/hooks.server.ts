@@ -10,32 +10,33 @@ import {
 	preferredLocale,
 	translations
 } from '$lib/i18n';
+import { readSessionUser } from '$lib/server/session';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const { url, request } = event;
+	const { url, request, cookies } = event;
 	const { pathname } = url;
 
-	const supportedLocales = locales.get().map((l) => l.toLowerCase());
-	const firstSegment = getFirstPathSegment(pathname);
+	const supported = locales.get().map((l) => l.toLowerCase());
+	const segment = getFirstPathSegment(pathname);
 
 	let lang: string;
 
-	if (isSupportedLocale(firstSegment, supportedLocales)) {
-		lang = firstSegment;
-	} else if (firstSegment && LOCALE_PATTERN.test(firstSegment)) {
-		// Invalid locale like /br/… — `reroute` maps into [lang]/[...path] for a custom 404.
-		lang = preferredLocale(request, supportedLocales);
+	if (segment && isSupportedLocale({ segment, supported })) {
+		lang = segment;
+	} else if (segment && LOCALE_PATTERN.test(segment)) {
+		lang = preferredLocale({ request, supported });
 	} else {
-		lang = preferredLocale(request, supportedLocales);
+		lang = preferredLocale({ request, supported });
 		redirect(307, `/${lang}${pathname === '/' ? '' : pathname}${url.search}`);
 	}
 
-	return resolve(
-		{ ...event, locals: { lang } },
-		{
-			transformPageChunk: ({ html }) => html.replace(/<html[^>]*>/, `<html lang="${lang}">`)
-		}
-	);
+	const user = await readSessionUser(cookies);
+	event.locals.lang = lang;
+	event.locals.user = user;
+
+	return resolve(event, {
+		transformPageChunk: ({ html }) => html.replace(/<html[^>]*>/, `<html lang="${lang}">`)
+	});
 };
 
 export const handleError: HandleServerError = async ({ error, event, message }) => {

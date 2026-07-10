@@ -38,7 +38,7 @@ const config: Config = {
 	]
 };
 
-export const localizedPath = (lang: string, path: string) => {
+export const localizedPath = ({ lang, path }: { lang: string; path: string }) => {
 	return resolve(path ? `/${lang}${path}` : `/${lang}`);
 };
 

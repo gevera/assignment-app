@@ -6,14 +6,23 @@ export function getFirstPathSegment(pathname: string): string | undefined {
 	return pathname.match(/[^/]+?(?=\/|$)/)?.[0]?.toLowerCase();
 }
 
-export function isSupportedLocale(
-	segment: string | undefined,
-	supported: string[]
-): segment is string {
+export function isSupportedLocale({
+	segment,
+	supported
+}: {
+	segment: string | undefined;
+	supported: string[];
+}): boolean {
 	return Boolean(segment && supported.includes(segment));
 }
 
-export function preferredLocale(request: Request, supported: string[]): string {
+export function preferredLocale({
+	request,
+	supported
+}: {
+	request: Request;
+	supported: string[];
+}): string {
 	const fromHeader =
 		`${request.headers.get('accept-language')}`
 			.match(/[a-zA-Z]+?(?=-|_|,|;)/)?.[0]
