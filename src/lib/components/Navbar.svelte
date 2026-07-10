@@ -5,7 +5,7 @@
 	import { localizedPath, t } from '$lib/i18n';
 
 	const lang = $derived(page.data.lang);
-	const route = $derived(page.data.route);
+	const route = $derived(page.url.pathname.replace(new RegExp(`^/${page.params.lang}`), ''));
 
 	function switchLocale(event: Event) {
 		const target = event.currentTarget as HTMLSelectElement;
