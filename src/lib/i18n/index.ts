@@ -2,8 +2,6 @@ import i18n, { type Config } from 'sveltekit-i18n';
 import { DEFAULT_LOCALE } from './locales';
 import { resolve } from '$app/paths';
 
-const lang = { en: 'English', de: 'Deutsch' } as const;
-
 function nestFlatKeys(flat: Record<string, string>): Record<string, unknown> {
 	const result: Record<string, unknown> = {};
 
@@ -23,7 +21,6 @@ function nestFlatKeys(flat: Record<string, string>): Record<string, unknown> {
 }
 
 const config: Config = {
-	translations: { en: { lang }, de: { lang } },
 	loaders: [
 		{
 			locale: 'en',
