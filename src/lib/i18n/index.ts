@@ -24,6 +24,10 @@ type TranslationPayload = {
 	minutes?: number;
 	count?: number;
 	query?: string;
+	filtered?: number;
+	total?: number;
+	start?: number;
+	end?: number;
 };
 
 const config: Config<TranslationPayload> = {

@@ -16,7 +16,7 @@ type SafeRedirectArgs = {
 
 /** Only allow same-locale relative paths; reject open redirects. */
 export function safeRedirectPath({ redirectTo, lang }: SafeRedirectArgs): string {
-	const fallback = `/${lang}/dashboard`;
+	const fallback = `/${lang}/dashboard/items`;
 	if (!redirectTo) return fallback;
 
 	if (

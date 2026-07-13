@@ -18,6 +18,7 @@
 <Button
 	variant="icon"
 	onclick={handleToggle}
+	class="cursor-pointer"
 	aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
 	disabled={theme === null}
 >

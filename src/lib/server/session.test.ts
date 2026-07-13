@@ -46,8 +46,14 @@ describe('safeRedirectPath', () => {
 	});
 
 	it('rejects open redirects', () => {
-		expect(safeRedirectPath({ redirectTo: 'https://evil.test', lang: 'en' })).toBe('/en/dashboard');
-		expect(safeRedirectPath({ redirectTo: '//evil.test', lang: 'en' })).toBe('/en/dashboard');
-		expect(safeRedirectPath({ redirectTo: '/de/dashboard', lang: 'en' })).toBe('/en/dashboard');
+		expect(safeRedirectPath({ redirectTo: 'https://evil.test', lang: 'en' })).toBe(
+			'/en/dashboard/items'
+		);
+		expect(safeRedirectPath({ redirectTo: '//evil.test', lang: 'en' })).toBe('/en/dashboard/items');
+		expect(safeRedirectPath({ redirectTo: '/de/dashboard', lang: 'en' })).toBe('/en/dashboard/items');
+	});
+
+	it('falls back when redirectTo is missing', () => {
+		expect(safeRedirectPath({ redirectTo: null, lang: 'en' })).toBe('/en/dashboard/items');
 	});
 });

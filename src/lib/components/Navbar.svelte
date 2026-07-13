@@ -26,7 +26,7 @@
 	]);
 
 	const authLinks = $derived<NavItem[]>(
-		user ? [{ path: '/dashboard', labelKey: 'nav.dashboard', match: 'exact' }] : []
+		user ? [{ path: '/dashboard', labelKey: 'nav.dashboard', match: 'prefix' }] : []
 	);
 
 	const links = $derived([...publicLinks, ...authLinks]);
@@ -118,13 +118,14 @@
 
 				{#if user}
 					<form method="POST" action={logoutAction} use:enhance class="hidden sm:block">
-						<Button variant="ghost" type="submit">
+						<Button variant="ghost" type="submit" class="cursor-pointer">
 							{@render stableLabel('nav.logout')}
 						</Button>
 					</form>
 				{:else}
 					<div class="hidden sm:block">
-						<Button href={localizedPath({ lang, path: '/login' })}>
+						<Button
+						href={localizedPath({ lang, path: '/login' })}>
 							{@render stableLabel('nav.login')}
 						</Button>
 					</div>
