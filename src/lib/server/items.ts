@@ -5,6 +5,7 @@ import {
 	type ItemsQuery,
 	type ItemsSort
 } from '$lib/utils/items-query';
+import { compareSortValues, itemSortValues } from '$lib/utils/matchers';
 import { getItems } from './data';
 
 export type PagedItems = {
@@ -28,24 +29,8 @@ export function getAllItems(): Item[] {
 
 function compareItems(a: Item, b: Item, sort: ItemsSort, dir: ItemsDir): number {
 	const direction = dir === 'asc' ? 1 : -1;
-	let av: string | number;
-	let bv: string | number;
-
-	if (sort === 'owner') {
-		av = a.owner.name;
-		bv = b.owner.name;
-	} else {
-		av = a[sort];
-		bv = b[sort];
-	}
-
-	if (typeof av === 'string' && typeof bv === 'string') {
-		return av.localeCompare(bv) * direction;
-	}
-
-	if (av > bv) return direction;
-	if (av < bv) return -direction;
-	return 0;
+	const [av, bv] = itemSortValues({ a, b, sort });
+	return compareSortValues({ av, bv, direction });
 }
 
 export function queryItems(input: ItemsQuery): PagedItems {

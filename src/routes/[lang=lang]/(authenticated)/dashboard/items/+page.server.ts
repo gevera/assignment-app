@@ -2,7 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod';
 import { itemStatusSchema } from '$lib/schemas';
 import { getAllItems, queryItems, updateItem } from '$lib/server';
-import { parseItemsQuery } from '$lib/utils/items-query';
+import { fieldToPatch, parseItemsQuery } from '$lib/utils';
 import type { Actions, PageServerLoad } from './$types';
 
 const updateFieldSchema = z.discriminatedUnion('field', [
@@ -73,15 +73,8 @@ export const actions: Actions = {
 			return fail(500, { message: 'dashboard.items.editFailed' });
 		}
 
-		const { id, field, value } = parsed.data;
-		const patch =
-			field === 'name'
-				? { name: value }
-				: field === 'budget'
-					? { budget: value }
-					: field === 'spent'
-						? { spent: value }
-						: { status: value };
+		const { id, ...fieldValue } = parsed.data;
+		const patch = fieldToPatch(fieldValue);
 
 		const updated = updateItem(id, patch);
 		if (!updated) {

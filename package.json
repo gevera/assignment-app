@@ -70,6 +70,7 @@
 		"@fontsource/source-serif-4": "^5.2.9",
 		"jose": "^6.2.3",
 		"sveltekit-i18n": "^2.4.2",
+		"ts-pattern": "^5.9.0",
 		"zod": "^4.4.3"
 	}
 }

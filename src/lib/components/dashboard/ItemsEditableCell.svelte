@@ -3,6 +3,7 @@
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { t } from '$lib/i18n';
+	import { actionFailureMessage, isActionSuccess } from '$lib/utils';
 
 	type Props = {
 		itemId: string;
@@ -51,7 +52,7 @@
 		return async ({ result }) => {
 			saving = false;
 
-			if (result.type === 'success') {
+			if (isActionSuccess({ result })) {
 				resetDraft();
 				await invalidate('app:items');
 				await applyAction(result);
@@ -59,15 +60,7 @@
 			}
 
 			draft = previous;
-			const messageKey =
-				result.type === 'failure' &&
-				result.data &&
-				typeof result.data === 'object' &&
-				'message' in result.data &&
-				typeof result.data.message === 'string'
-					? result.data.message
-					: 'dashboard.items.editFailed';
-			onEditError?.($t(`i18n.${messageKey}`));
+			onEditError?.($t(`i18n.${actionFailureMessage({ result })}`));
 			await applyAction(result);
 		};
 	}}

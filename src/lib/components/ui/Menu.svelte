@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { match, P } from 'ts-pattern';
+	import { menuKeyCommand, menuTriggerCommand } from '$lib/utils';
 
 	export type MenuOption = {
 		value: string;
@@ -102,50 +104,30 @@
 	function onTriggerKeydown(event: KeyboardEvent) {
 		if (disabled) return;
 
-		if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
-			event.preventDefault();
-			openMenu(0);
-			return;
-		}
-
-		if (event.key === 'ArrowUp') {
-			event.preventDefault();
-			openMenu(options.length - 1);
-		}
+		match(menuTriggerCommand({ key: event.key, lastIndex: options.length - 1 }))
+			.with({ kind: 'open', index: P.select() }, (index) => {
+				event.preventDefault();
+				openMenu(index);
+			})
+			.with({ kind: 'noop' }, () => undefined)
+			.exhaustive();
 	}
 
 	function onMenuKeydown(event: KeyboardEvent) {
 		if (!open) return;
 
-		switch (event.key) {
-			case 'Escape':
+		match(menuKeyCommand({ key: event.key, activeIndex, length: options.length }))
+			.with({ kind: 'focus', index: P.select() }, (index) => {
 				event.preventDefault();
-				closeMenu(true);
-				break;
-			case 'ArrowDown':
-				event.preventDefault();
-				activeIndex = (activeIndex + 1) % options.length;
-				focusItem(activeIndex);
-				break;
-			case 'ArrowUp':
-				event.preventDefault();
-				activeIndex = (activeIndex - 1 + options.length) % options.length;
-				focusItem(activeIndex);
-				break;
-			case 'Home':
-				event.preventDefault();
-				activeIndex = 0;
-				focusItem(activeIndex);
-				break;
-			case 'End':
-				event.preventDefault();
-				activeIndex = options.length - 1;
-				focusItem(activeIndex);
-				break;
-			case 'Tab':
-				closeMenu(false);
-				break;
-		}
+				activeIndex = index;
+				focusItem(index);
+			})
+			.with({ kind: 'close' }, ({ restoreFocus, preventDefault }) => {
+				if (preventDefault) event.preventDefault();
+				closeMenu(restoreFocus);
+			})
+			.with({ kind: 'noop' }, () => undefined)
+			.exhaustive();
 	}
 
 	function onDocumentPointerDown(event: PointerEvent) {
@@ -176,7 +158,7 @@
 	{#if open}
 		<ul
 			id={menuId}
-			class="absolute top-full left-0 z-50 mt-1 min-w-[10rem] rounded-md border border-border bg-surface-elevated py-1 shadow-md"
+			class="absolute top-full left-0 z-50 mt-1 min-w-40 rounded-md border border-border bg-surface-elevated py-1 shadow-md"
 			role="menu"
 			aria-label={ariaLabel}
 			onkeydown={onMenuKeydown}

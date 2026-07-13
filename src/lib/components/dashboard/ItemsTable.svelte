@@ -7,10 +7,10 @@
 	import type { Item } from '$lib/schemas';
 	import {
 		itemsQueryPath,
-		type ItemsDir,
+		nextSortDirection,
 		type ItemsQuery,
 		type ItemsSort
-	} from '$lib/utils/items-query';
+	} from '$lib/utils';
 
 	type Props = {
 		items: Item[];
@@ -28,13 +28,7 @@
 	const lang = $derived(page.params.lang ?? 'en');
 
 	function toggleSort(key: ItemsSort) {
-		let dir: ItemsDir = 'asc';
-		if (query.sort === key) {
-			dir = query.dir === 'asc' ? 'desc' : 'asc';
-		} else if (key === 'updatedAt' || key === 'budget' || key === 'spent' || key === 'ctr') {
-			dir = 'desc';
-		}
-
+		const dir = nextSortDirection({ sort: query.sort, dir: query.dir, key });
 		const next: ItemsQuery = { ...query, sort: key, dir, page: 1 };
 		void goto(resolve(itemsQueryPath(lang, next, { fail })), {
 			keepFocus: true,

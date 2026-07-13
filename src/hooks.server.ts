@@ -3,14 +3,13 @@ import { redirect } from '@sveltejs/kit';
 import {
 	defaultLocale,
 	getFirstPathSegment,
-	isSupportedLocale,
 	loadTranslations,
-	LOCALE_PATTERN,
 	locales,
 	preferredLocale,
 	translations
 } from '$lib/i18n';
 import { readSessionUser } from '$lib/server/session';
+import { classifyLocaleSegment, resolveLocaleRouting } from '$lib/utils';
 
 const META_PATHS = new Set(['/sitemap.xml', '/robots.txt']);
 
@@ -24,15 +23,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const supported = locales.get().map((l) => l.toLowerCase());
 	const segment = getFirstPathSegment(pathname);
+	const preferred = preferredLocale({ request, supported });
+	const { lang, shouldRedirect } = resolveLocaleRouting({
+		kind: classifyLocaleSegment({ segment, supported }),
+		preferred
+	});
 
-	let lang: string;
-
-	if (segment && isSupportedLocale({ segment, supported })) {
-		lang = segment;
-	} else if (segment && LOCALE_PATTERN.test(segment)) {
-		lang = preferredLocale({ request, supported });
-	} else {
-		lang = preferredLocale({ request, supported });
+	if (shouldRedirect) {
 		redirect(307, `/${lang}${pathname === '/' ? '' : pathname}${url.search}`);
 	}
 
