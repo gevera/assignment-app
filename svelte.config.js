@@ -13,7 +13,12 @@ const config = {
 			return isExternalLibrary ? undefined : true;
 		}
 	},
-	kit: { adapter: adapter() },
+	kit: {
+		adapter: adapter(),
+		alias: {
+			$ui: 'src/lib/components/ui'
+		}
+	},
 	vitePlugin: {
 		inspector: true
 	}

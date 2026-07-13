@@ -1,81 +1,118 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
+	import { Button, Field, Heading, Input, PasswordInput } from '$ui';
 	import { loginSchema } from '$lib/schemas';
 	import { t } from '$lib/i18n';
+	import { slide } from 'svelte/transition';
+	import { z } from 'zod';
 	import type { ActionData } from './$types';
 
 	let { form }: { form: ActionData } = $props();
 
 	let clientErrors = $state<{ email?: string; password?: string }>({});
+	let submitting = $state(false);
+	let hideServerFeedback = $state(false);
 
 	const redirectTo = $derived(page.url.searchParams.get('redirect') ?? '');
 	const emailValue = $derived(form?.values?.email ?? '');
-	const emailError = $derived(clientErrors.email ?? form?.errors?.email);
-	const passwordError = $derived(clientErrors.password ?? form?.errors?.password);
-	const formMessage = $derived(form?.message);
+	const errors = $derived.by(() => {
+		const fromServer = hideServerFeedback ? undefined : form?.errors;
+		return {
+			email: clientErrors.email ?? fromServer?.email,
+			password: clientErrors.password ?? fromServer?.password,
+			message: hideServerFeedback ? undefined : form?.message
+		};
+	});
+
+	function clearErrors() {
+		hideServerFeedback = true;
+		clientErrors = {};
+	}
 </script>
 
-<h1>{$t('i18n.login.title')}</h1>
+<div class="flex min-h-0 w-full flex-1 flex-col">
+	<div class="min-h-0 flex-1" aria-hidden="true"></div>
+	<div class="mx-auto w-full max-w-sm shrink-0">
+		<Heading class="text-center">{$t('i18n.login.title')}</Heading>
 
-<form
-	method="POST"
-	action="?/login"
-	use:enhance={({ formData, cancel }) => {
-		const result = loginSchema.safeParse({
-			email: String(formData.get('email') ?? ''),
-			password: String(formData.get('password') ?? '')
-		});
+		<form
+			method="POST"
+			action="?/login"
+			class="relative mt-8 flex flex-col gap-5"
+			oninput={clearErrors}
+			use:enhance={({ formData, cancel }) => {
+				const result = loginSchema.safeParse({
+					email: String(formData.get('email') ?? ''),
+					password: String(formData.get('password') ?? '')
+				});
 
-		if (!result.success) {
-			const { email, password } = result.error.flatten().fieldErrors;
-			clientErrors = { email: email?.[0], password: password?.[0] };
-			cancel();
-			return;
-		}
+				if (!result.success) {
+					const { email, password } = z.flattenError(result.error).fieldErrors;
+					clientErrors = { email: email?.[0], password: password?.[0] };
+					hideServerFeedback = true;
+					submitting = false;
+					cancel();
+					return;
+				}
 
-		clientErrors = {};
-		return async ({ update }) => {
-			await update();
-		};
-	}}
->
-	{#if redirectTo}
-		<input type="hidden" name="redirect" value={redirectTo} />
-	{/if}
+				clientErrors = {};
+				submitting = true;
 
-	{#if formMessage}
-		<p role="alert">{$t(`i18n.${formMessage}`)}</p>
-	{/if}
+				return async ({ update }) => {
+					try {
+						await update();
+					} finally {
+						hideServerFeedback = false;
+						submitting = false;
+					}
+				};
+			}}
+		>
+			{#if redirectTo}
+				<input type="hidden" name="redirect" value={redirectTo} />
+			{/if}
 
-	<label>
-		{$t('i18n.login.email')}
-		<input
-			type="email"
-			name="email"
-			autocomplete="email"
-			required
-			value={emailValue}
-			aria-invalid={emailError ? true : undefined}
-		/>
-		{#if emailError}
-			<span role="alert">{emailError}</span>
-		{/if}
-	</label>
+			<Field label={$t('i18n.login.email')} error={errors.email}>
+				{#snippet children({ id, describedby, invalid })}
+					<Input
+						{id}
+						type="email"
+						name="email"
+						autocomplete="email"
+						required
+						value={emailValue}
+						aria-invalid={invalid}
+						aria-describedby={describedby}
+					/>
+				{/snippet}
+			</Field>
 
-	<label>
-		{$t('i18n.login.password')}
-		<input
-			type="password"
-			name="password"
-			autocomplete="current-password"
-			required
-			aria-invalid={passwordError ? true : undefined}
-		/>
-		{#if passwordError}
-			<span role="alert">{passwordError}</span>
-		{/if}
-	</label>
+			<Field label={$t('i18n.login.password')} error={errors.password}>
+				{#snippet children({ id, describedby, invalid })}
+					<PasswordInput
+						{id}
+						name="password"
+						autocomplete="current-password"
+						required
+						aria-invalid={invalid}
+						aria-describedby={describedby}
+					/>
+				{/snippet}
+			</Field>
 
-	<button type="submit">{$t('i18n.login.submit')}</button>
-</form>
+			<Button type="submit" class="w-full" disabled={submitting}>
+				{$t('i18n.login.submit')}
+			</Button>
+
+			<div class="absolute inset-x-0 top-full pt-8">
+				{#if errors.message}
+					<p class="text-center text-sm text-danger" role="alert" transition:slide>
+						{$t(`i18n.${errors.message}`)}
+					</p>
+				{/if}
+			</div>
+		</form>
+	</div>
+	<div class="min-h-0 flex-4" aria-hidden="true"></div>
+</div>

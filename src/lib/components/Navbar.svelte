@@ -2,11 +2,9 @@
 	import { enhance } from '$app/forms';
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
-	import BurgerButton from '$lib/components/BurgerButton.svelte';
-	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Container from '$lib/components/ui/Container.svelte';
-	import NavLink from '$lib/components/ui/NavLink.svelte';
+	import BurgerButton from './BurgerButton.svelte';
+	import ThemeToggle from './ThemeToggle.svelte';
+	import { Button, Container, NavLink } from '$ui';
 	import { LOCALES, localizedPath, t, type Locale } from '$lib/i18n';
 	import en from '../../../mocks/i18n.en.json';
 	import de from '../../../mocks/i18n.de.json';

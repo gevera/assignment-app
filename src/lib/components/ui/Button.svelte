@@ -9,10 +9,15 @@
 	type NativeButtonProps = BaseProps & HTMLButtonAttributes & { href?: never };
 	type Props = AnchorProps | NativeButtonProps;
 
-	let { variant = 'primary', class: className = '', children, ...rest }: Props = $props();
+	let {
+		variant = 'primary',
+		class: className = '',
+		children,
+		...rest
+	}: Props = $props();
 
 	const base =
-		'inline-flex items-center justify-center text-sm whitespace-nowrap transition-colors';
+		'inline-flex items-center justify-center text-sm whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-50';
 
 	const variants: Record<Variant, string> = {
 		primary: 'h-11 rounded-md bg-accent px-4 font-medium text-accent-fg',

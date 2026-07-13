@@ -1,8 +1,7 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
-	import Navbar from '$lib/components/Navbar.svelte';
-	import SkipLink from '$lib/components/SkipLink.svelte';
-	import Container from '$lib/components/ui/Container.svelte';
+	import { Navbar, SkipLink } from '$lib/components';
+	import { Container } from '$ui';
 	import './layout.css';
 
 	let { children } = $props();
@@ -17,8 +16,8 @@
 	<header class="sticky top-0 z-40 border-b border-border bg-surface/75 backdrop-blur-md">
 		<Navbar />
 	</header>
-	<main id="main-content" tabindex="-1" class="flex-1 outline-none">
-		<Container class="py-section overflow-x-scroll">
+	<main id="main-content" tabindex="-1" class="flex flex-1 flex-col outline-none">
+		<Container class="flex flex-1 flex-col py-section overflow-x-scroll">
 			{@render children()}
 		</Container>
 	</main>

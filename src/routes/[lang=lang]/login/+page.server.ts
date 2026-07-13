@@ -7,6 +7,7 @@ import {
 	safeRedirectPath,
 	setSessionCookie
 } from '$lib/server';
+import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params, url }) => {
@@ -32,7 +33,9 @@ export const actions: Actions = {
 
 		const parsed = loginSchema.safeParse(values);
 		if (!parsed.success) {
-			const { email: emailError, password: passwordError } = parsed.error.flatten().fieldErrors;
+			const { email: emailError, password: passwordError } = z.flattenError(
+				parsed.error
+			).fieldErrors;
 			const { email } = values;
 			return fail(400, {
 				values: { email },
