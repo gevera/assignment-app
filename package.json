@@ -68,6 +68,7 @@
 	"dependencies": {
 		"@fontsource/ibm-plex-sans": "^5.2.8",
 		"@fontsource/source-serif-4": "^5.2.9",
+		"fuse.js": "^7.4.2",
 		"jose": "^6.2.3",
 		"sveltekit-i18n": "^2.4.2",
 		"ts-pattern": "^5.9.0",

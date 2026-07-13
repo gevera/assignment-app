@@ -3,14 +3,17 @@ import type { Item } from '$lib/schemas';
 import {
 	actionFailureMessage,
 	classifyLocaleSegment,
+	classifySearchEnterTarget,
 	compareSortValues,
+	dialogKeyCommand,
 	fieldToPatch,
 	isActionSuccess,
 	itemSortValues,
 	menuKeyCommand,
 	menuTriggerCommand,
 	nextSortDirection,
-	resolveLocaleRouting
+	resolveLocaleRouting,
+	searchKeyCommand
 } from './matchers';
 
 const baseItem = {
@@ -92,9 +95,9 @@ describe('itemSortValues / compareSortValues', () => {
 describe('actionFailureMessage / isActionSuccess', () => {
 	it('detects success results', () => {
 		expect(isActionSuccess({ result: { type: 'success', status: 200 } })).toBe(true);
-		expect(
-			isActionSuccess({ result: { type: 'failure', status: 400, data: undefined } })
-		).toBe(false);
+		expect(isActionSuccess({ result: { type: 'failure', status: 400, data: undefined } })).toBe(
+			false
+		);
 	});
 
 	it('reads failure message when present', () => {
@@ -176,6 +179,131 @@ describe('menuTriggerCommand / menuKeyCommand', () => {
 	});
 });
 
+describe('classifySearchEnterTarget / searchKeyCommand', () => {
+	it('classifies enter targets by tag and role', () => {
+		expect(classifySearchEnterTarget({ tagName: 'INPUT' })).toBe('input');
+		expect(classifySearchEnterTarget({ tagName: 'BUTTON', role: 'option' })).toBe('option');
+		expect(classifySearchEnterTarget({ tagName: 'BUTTON' })).toBe('other');
+		expect(classifySearchEnterTarget({})).toBe('other');
+	});
+
+	it('toggles on ctrl/meta+k regardless of dialog state', () => {
+		expect(
+			searchKeyCommand({
+				key: 'k',
+				ctrlOrMeta: true,
+				open: false,
+				activeIndex: 0,
+				length: 0,
+				target: {}
+			})
+		).toEqual({ kind: 'toggle' });
+		expect(
+			searchKeyCommand({
+				key: 'K',
+				ctrlOrMeta: true,
+				open: true,
+				activeIndex: 1,
+				length: 3,
+				target: { tagName: 'INPUT' }
+			})
+		).toEqual({ kind: 'toggle' });
+	});
+
+	it('ignores navigation when closed or empty', () => {
+		expect(
+			searchKeyCommand({
+				key: 'ArrowDown',
+				ctrlOrMeta: false,
+				open: false,
+				activeIndex: 0,
+				length: 3,
+				target: {}
+			})
+		).toEqual({ kind: 'noop' });
+		expect(
+			searchKeyCommand({
+				key: 'ArrowDown',
+				ctrlOrMeta: false,
+				open: true,
+				activeIndex: 0,
+				length: 0,
+				target: {}
+			})
+		).toEqual({ kind: 'noop' });
+	});
+
+	it('maps arrow and enter keys when results are available', () => {
+		expect(
+			searchKeyCommand({
+				key: 'ArrowDown',
+				ctrlOrMeta: false,
+				open: true,
+				activeIndex: 2,
+				length: 5,
+				target: {}
+			})
+		).toEqual({ kind: 'focus', index: 3 });
+		expect(
+			searchKeyCommand({
+				key: 'ArrowUp',
+				ctrlOrMeta: false,
+				open: true,
+				activeIndex: 0,
+				length: 5,
+				target: {}
+			})
+		).toEqual({ kind: 'focus', index: 4 });
+		expect(
+			searchKeyCommand({
+				key: 'Enter',
+				ctrlOrMeta: false,
+				open: true,
+				activeIndex: 2,
+				length: 5,
+				target: { tagName: 'INPUT' }
+			})
+		).toEqual({ kind: 'select', index: 2 });
+		expect(
+			searchKeyCommand({
+				key: 'Enter',
+				ctrlOrMeta: false,
+				open: true,
+				activeIndex: 2,
+				length: 5,
+				target: { tagName: 'BUTTON', role: 'option' }
+			})
+		).toEqual({ kind: 'noop' });
+	});
+});
+
+describe('dialogKeyCommand', () => {
+	it('closes on Escape', () => {
+		expect(
+			dialogKeyCommand({ key: 'Escape', shiftKey: false, atFirst: false, atLast: false })
+		).toEqual({ kind: 'close' });
+	});
+
+	it('traps Tab at the focus boundaries', () => {
+		expect(dialogKeyCommand({ key: 'Tab', shiftKey: true, atFirst: true, atLast: false })).toEqual({
+			kind: 'trap',
+			focus: 'last'
+		});
+		expect(dialogKeyCommand({ key: 'Tab', shiftKey: false, atFirst: false, atLast: true })).toEqual(
+			{ kind: 'trap', focus: 'first' }
+		);
+	});
+
+	it('ignores Tab in the middle and unrelated keys', () => {
+		expect(
+			dialogKeyCommand({ key: 'Tab', shiftKey: false, atFirst: false, atLast: false })
+		).toEqual({ kind: 'noop' });
+		expect(dialogKeyCommand({ key: 'a', shiftKey: false, atFirst: true, atLast: false })).toEqual({
+			kind: 'noop'
+		});
+	});
+});
+
 describe('classifyLocaleSegment / resolveLocaleRouting', () => {
 	const supported = ['en', 'de'];
 
@@ -202,12 +330,12 @@ describe('classifyLocaleSegment / resolveLocaleRouting', () => {
 			lang: 'de',
 			shouldRedirect: false
 		});
-		expect(
-			resolveLocaleRouting({ kind: { kind: 'unsupported-locale' }, preferred: 'en' })
-		).toEqual({
-			lang: 'en',
-			shouldRedirect: false
-		});
+		expect(resolveLocaleRouting({ kind: { kind: 'unsupported-locale' }, preferred: 'en' })).toEqual(
+			{
+				lang: 'en',
+				shouldRedirect: false
+			}
+		);
 	});
 
 	it('redirects when the first segment is not a locale', () => {

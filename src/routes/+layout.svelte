@@ -1,6 +1,6 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
-	import { Navbar, SkipLink } from '$lib/components';
+	import { Navbar, SearchDialog, SkipLink } from '$lib/components';
 	import { Container } from '$ui';
 	import './layout.css';
 
@@ -17,7 +17,7 @@
 		<Navbar />
 	</header>
 	<main id="main-content" tabindex="-1" class="flex flex-1 flex-col outline-none">
-		<Container class="flex flex-1 flex-col py-section overflow-x-scroll">
+		<Container class="flex flex-1 flex-col overflow-x-scroll py-section">
 			{@render children()}
 		</Container>
 	</main>
@@ -27,3 +27,5 @@
 		</Container>
 	</footer>
 </div>
+
+<SearchDialog />

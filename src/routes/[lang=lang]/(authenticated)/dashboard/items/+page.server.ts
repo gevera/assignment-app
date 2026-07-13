@@ -66,8 +66,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const forceFail =
-			url.searchParams.get('fail') === '1' || formData.get('_fail') === '1';
+		const forceFail = url.searchParams.get('fail') === '1' || formData.get('_fail') === '1';
 
 		if (forceFail) {
 			return fail(500, { message: 'dashboard.items.editFailed' });

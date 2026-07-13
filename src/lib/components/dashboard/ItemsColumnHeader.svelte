@@ -13,9 +13,7 @@
 	let { column, activeSort, dir, onsort }: Props = $props();
 
 	const active = $derived(activeSort === column.key);
-	const ariaSort = $derived(
-		!active ? 'none' : dir === 'asc' ? 'ascending' : 'descending'
-	);
+	const ariaSort = $derived(!active ? 'none' : dir === 'asc' ? 'ascending' : 'descending');
 
 	function onKeydown(event: KeyboardEvent) {
 		if (event.key === 'Enter' || event.key === ' ') {

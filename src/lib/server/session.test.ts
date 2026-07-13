@@ -50,7 +50,9 @@ describe('safeRedirectPath', () => {
 			'/en/dashboard/items'
 		);
 		expect(safeRedirectPath({ redirectTo: '//evil.test', lang: 'en' })).toBe('/en/dashboard/items');
-		expect(safeRedirectPath({ redirectTo: '/de/dashboard', lang: 'en' })).toBe('/en/dashboard/items');
+		expect(safeRedirectPath({ redirectTo: '/de/dashboard', lang: 'en' })).toBe(
+			'/en/dashboard/items'
+		);
 	});
 
 	it('falls back when redirectTo is missing', () => {

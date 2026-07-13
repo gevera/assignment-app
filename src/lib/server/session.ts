@@ -16,7 +16,7 @@ function getSecretKey() {
 	return new TextEncoder().encode(AUTH_SECRET);
 }
 
-export async function createSessionToken({email, name, role, id}: SessionUser): Promise<string> {
+export async function createSessionToken({ email, name, role, id }: SessionUser): Promise<string> {
 	return new SignJWT({
 		email,
 		name,

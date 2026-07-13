@@ -11,14 +11,9 @@ export type UpdateFieldData =
 	| { field: 'status'; value: ItemStatus };
 
 export type FieldPatch =
-	| { name: string }
-	| { budget: number }
-	| { spent: number }
-	| { status: ItemStatus };
+	{ name: string } | { budget: number } | { spent: number } | { status: ItemStatus };
 
-export type MenuTriggerCommand =
-	| { kind: 'noop' }
-	| { kind: 'open'; index: number };
+export type MenuTriggerCommand = { kind: 'noop' } | { kind: 'open'; index: number };
 
 export type MenuKeyCommand =
 	| { kind: 'noop' }
@@ -26,9 +21,7 @@ export type MenuKeyCommand =
 	| { kind: 'focus'; index: number };
 
 export type LocaleSegmentKind =
-	| { kind: 'supported'; segment: string }
-	| { kind: 'unsupported-locale' }
-	| { kind: 'missing' };
+	{ kind: 'supported'; segment: string } | { kind: 'unsupported-locale' } | { kind: 'missing' };
 
 export type LocaleRouting = {
 	lang: string;
@@ -70,6 +63,38 @@ export type MenuKeyCommandInput = {
 	key: string;
 	activeIndex: number;
 	length: number;
+};
+
+export type SearchKeyCommand =
+	| { kind: 'noop' }
+	| { kind: 'toggle' }
+	| { kind: 'focus'; index: number }
+	| { kind: 'select'; index: number };
+
+export type SearchEnterTarget = 'input' | 'option' | 'other';
+
+export type SearchTargetInfo = {
+	tagName?: string;
+	role?: string | null;
+};
+
+export type SearchKeyCommandInput = {
+	key: string;
+	ctrlOrMeta: boolean;
+	open: boolean;
+	activeIndex: number;
+	length: number;
+	target: SearchTargetInfo;
+};
+
+export type DialogKeyCommand =
+	{ kind: 'noop' } | { kind: 'close' } | { kind: 'trap'; focus: 'first' | 'last' };
+
+export type DialogKeyCommandInput = {
+	key: string;
+	shiftKey: boolean;
+	atFirst: boolean;
+	atLast: boolean;
 };
 
 export type ClassifyLocaleSegmentInput = {
@@ -167,10 +192,7 @@ export function actionFailureMessage({
 	fallback = DEFAULT_ACTION_FAILURE_MESSAGE
 }: ActionFailureMessageInput): string {
 	return match(result)
-		.with(
-			{ type: 'failure', data: { message: P.select(P.string) } },
-			(message) => message
-		)
+		.with({ type: 'failure', data: { message: P.select(P.string) } }, (message) => message)
 		.otherwise(() => fallback);
 }
 
@@ -184,11 +206,7 @@ export function menuTriggerCommand({
 		.otherwise(() => ({ kind: 'noop' as const }));
 }
 
-export function menuKeyCommand({
-	key,
-	activeIndex,
-	length
-}: MenuKeyCommandInput): MenuKeyCommand {
+export function menuKeyCommand({ key, activeIndex, length }: MenuKeyCommandInput): MenuKeyCommand {
 	return match(key)
 		.with('Escape', () => ({
 			kind: 'close' as const,
@@ -209,6 +227,65 @@ export function menuKeyCommand({
 			kind: 'close' as const,
 			restoreFocus: false,
 			preventDefault: false
+		}))
+		.otherwise(() => ({ kind: 'noop' as const }));
+}
+
+export function classifySearchEnterTarget({ tagName, role }: SearchTargetInfo): SearchEnterTarget {
+	return match({ tagName: tagName?.toUpperCase(), role })
+		.with({ tagName: 'INPUT' }, () => 'input' as const)
+		.with({ tagName: 'BUTTON', role: 'option' }, () => 'option' as const)
+		.otherwise(() => 'other' as const);
+}
+
+export function searchKeyCommand({
+	key,
+	ctrlOrMeta,
+	open,
+	activeIndex,
+	length,
+	target
+}: SearchKeyCommandInput): SearchKeyCommand {
+	return match({
+		modK: ctrlOrMeta && key.toLowerCase() === 'k',
+		open,
+		hasPosts: length > 0,
+		key,
+		enterTarget: classifySearchEnterTarget(target)
+	})
+		.with({ modK: true }, () => ({ kind: 'toggle' as const }))
+		.with({ open: false }, () => ({ kind: 'noop' as const }))
+		.with({ hasPosts: false }, () => ({ kind: 'noop' as const }))
+		.with({ key: 'ArrowDown' }, () => ({
+			kind: 'focus' as const,
+			index: (activeIndex + 1) % length
+		}))
+		.with({ key: 'ArrowUp' }, () => ({
+			kind: 'focus' as const,
+			index: (activeIndex - 1 + length) % length
+		}))
+		.with({ key: 'Enter', enterTarget: 'input' }, () => ({
+			kind: 'select' as const,
+			index: activeIndex
+		}))
+		.otherwise(() => ({ kind: 'noop' as const }));
+}
+
+export function dialogKeyCommand({
+	key,
+	shiftKey,
+	atFirst,
+	atLast
+}: DialogKeyCommandInput): DialogKeyCommand {
+	return match({ key, shiftKey, atFirst, atLast })
+		.with({ key: 'Escape' }, () => ({ kind: 'close' as const }))
+		.with({ key: 'Tab', shiftKey: true, atFirst: true }, () => ({
+			kind: 'trap' as const,
+			focus: 'last' as const
+		}))
+		.with({ key: 'Tab', shiftKey: false, atLast: true }, () => ({
+			kind: 'trap' as const,
+			focus: 'first' as const
 		}))
 		.otherwise(() => ({ kind: 'noop' as const }));
 }

@@ -47,11 +47,7 @@
 							{$t(`i18n.home.pricing.tier.${tier.id}.cta`)}
 						</Button>
 					{:else}
-						<Button
-							variant="ghost"
-							href={loginHref}
-							class="w-full rounded-md border border-border"
-						>
+						<Button variant="ghost" href={loginHref} class="w-full rounded-md border border-border">
 							{$t(`i18n.home.pricing.tier.${tier.id}.cta`)}
 						</Button>
 					{/if}

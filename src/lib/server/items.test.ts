@@ -82,7 +82,10 @@ describe('updateItem', () => {
 		const originalSpent = item.spent;
 		const previous = item.updatedAt;
 
-		const updated = updateItem(item.id, { budget: originalBudget + 100, spent: originalSpent + 10 });
+		const updated = updateItem(item.id, {
+			budget: originalBudget + 100,
+			spent: originalSpent + 10
+		});
 		expect(updated).not.toBeNull();
 		expect(updated!.budget).toBe(originalBudget + 100);
 		expect(updated!.spent).toBe(originalSpent + 10);

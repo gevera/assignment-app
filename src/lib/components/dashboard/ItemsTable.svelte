@@ -2,15 +2,10 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { ItemsColumnHeader, ItemsTableRow } from '$lib/components/dashboard'
+	import { ItemsColumnHeader, ItemsTableRow } from '$lib/components/dashboard';
 	import { ITEMS_COLUMNS } from '$lib/components/dashboard/columns';
 	import type { Item } from '$lib/schemas';
-	import {
-		itemsQueryPath,
-		nextSortDirection,
-		type ItemsQuery,
-		type ItemsSort
-	} from '$lib/utils';
+	import { itemsQueryPath, nextSortDirection, type ItemsQuery, type ItemsSort } from '$lib/utils';
 
 	type Props = {
 		items: Item[];
@@ -42,24 +37,13 @@
 		<thead>
 			<tr>
 				{#each ITEMS_COLUMNS as column (column.key)}
-					<ItemsColumnHeader
-						{column}
-						activeSort={query.sort}
-						dir={query.dir}
-						onsort={toggleSort}
-					/>
+					<ItemsColumnHeader {column} activeSort={query.sort} dir={query.dir} onsort={toggleSort} />
 				{/each}
 			</tr>
 		</thead>
 		<tbody>
 			{#each items as item (item.id)}
-				<ItemsTableRow
-					{item}
-					{canEdit}
-					{numberLocale}
-					{dateLocale}
-					{onEditError}
-				/>
+				<ItemsTableRow {item} {canEdit} {numberLocale} {dateLocale} {onEditError} />
 			{/each}
 		</tbody>
 	</table>

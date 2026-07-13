@@ -49,10 +49,7 @@ test.describe('status menu edit', () => {
 		await failTrigger.click();
 
 		const failMenu = page.getByRole('menu', { name: /change campaign status/i });
-		const failOption = failMenu
-			.getByRole('menuitem')
-			.filter({ hasNotText: beforeFail })
-			.first();
+		const failOption = failMenu.getByRole('menuitem').filter({ hasNotText: beforeFail }).first();
 		await failOption.click();
 
 		await expect(page.getByRole('status')).toContainText(/could not save|reverted/i);

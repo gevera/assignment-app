@@ -24,6 +24,7 @@ type TranslationPayload = {
 	minutes?: number;
 	count?: number;
 	query?: string;
+	tag?: string;
 	filtered?: number;
 	total?: number;
 	start?: number;

@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { DEFAULT_LOCALE, LOCALES, isLocale } from '$lib/i18n';
-	import { OG_IMAGE, OG_LOCALES, SITE_NAME, SITE_URL, alternateLinks, canonicalUrl } from '$lib/seo';
+	import {
+		OG_IMAGE,
+		OG_LOCALES,
+		SITE_NAME,
+		SITE_URL,
+		alternateLinks,
+		canonicalUrl
+	} from '$lib/seo';
 
 	type Props = {
 		title: string;

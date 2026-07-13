@@ -6,6 +6,7 @@
 	import ThemeToggle from './ThemeToggle.svelte';
 	import { Button, Container, NavLink } from '$ui';
 	import { LOCALES, localizedPath, t, type Locale } from '$lib/i18n';
+	import { openSearchDialog } from '$lib/search/dialog';
 	import en from '../../../mocks/i18n.en.json';
 	import de from '../../../mocks/i18n.de.json';
 
@@ -14,15 +15,19 @@
 
 	const lang = $derived(page.data.lang ?? page.params.lang ?? 'en');
 	const user = $derived(page.data.user);
-	const route = $derived(page.url.pathname.replace(new RegExp(`^/${page.params.lang}`), '') || '');
+	const searchOpen = $derived(Boolean(page.state.searchOpen));
+	const route = $derived(
+		searchOpen
+			? (page.state.searchReturnPath ?? '')
+			: page.url.pathname.replace(new RegExp(`^/${page.params.lang}`), '') || ''
+	);
 	const logoutAction = $derived(`${localizedPath({ lang, path: '/login' })}?/logout`);
 
 	type NavItem = { path: string; labelKey: CatalogKey; match?: 'exact' | 'prefix' };
 
 	const publicLinks = $derived<NavItem[]>([
 		{ path: '', labelKey: 'nav.home', match: 'exact' },
-		{ path: '/blog', labelKey: 'nav.blog', match: 'prefix' },
-		{ path: '/search', labelKey: 'nav.search', match: 'exact' }
+		{ path: '/blog', labelKey: 'nav.blog', match: 'prefix' }
 	]);
 
 	const authLinks = $derived<NavItem[]>(
@@ -44,6 +49,11 @@
 
 	function closeMenu() {
 		menuOpen = false;
+	}
+
+	function onSearchClick() {
+		closeMenu();
+		openSearchDialog();
 	}
 
 	function onWindowKeydown(event: KeyboardEvent) {
@@ -91,6 +101,18 @@
 						</NavLink>
 					</li>
 				{/each}
+				<li>
+					<Button
+						variant="ghost"
+						type="button"
+						class="cursor-pointer"
+						aria-expanded={searchOpen}
+						aria-haspopup="dialog"
+						onclick={onSearchClick}
+					>
+						{@render stableLabel('nav.search')}
+					</Button>
+				</li>
 			</ul>
 
 			<div class="ml-auto flex shrink-0 items-center gap-1">
@@ -124,8 +146,7 @@
 					</form>
 				{:else}
 					<div class="hidden sm:block">
-						<Button
-						href={localizedPath({ lang, path: '/login' })}>
+						<Button href={localizedPath({ lang, path: '/login' })}>
 							{@render stableLabel('nav.login')}
 						</Button>
 					</div>
@@ -161,6 +182,11 @@
 							</NavLink>
 						</li>
 					{/each}
+					<li>
+						<Button variant="ghost" type="button" class="cursor-pointer" onclick={onSearchClick}>
+							{$t('i18n.nav.search')}
+						</Button>
+					</li>
 				</ul>
 
 				<div class="flex justify-center border-t border-border px-page py-3 sm:hidden">

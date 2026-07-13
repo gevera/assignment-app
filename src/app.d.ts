@@ -14,7 +14,11 @@ declare global {
 			translations?: Record<string, Record<string, unknown>>;
 		}
 		// interface PageData {}
-		// interface PageState {}
+		interface PageState {
+			searchOpen?: boolean;
+			/** Locale-less path to restore for language switching while search is open. */
+			searchReturnPath?: string;
+		}
 		// interface Platform {}
 	}
 }
