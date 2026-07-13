@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
+	import Meta from '$lib/components/Meta.svelte';
 	import { Button, Field, Heading, Input, PasswordInput } from '$ui';
 	import { loginSchema } from '$lib/schemas';
 	import { t } from '$lib/i18n';
@@ -30,6 +31,8 @@
 		clientErrors = {};
 	}
 </script>
+
+<Meta title={$t('i18n.login.title')} description={$t('i18n.login.meta.description')} noindex />
 
 <div class="flex min-h-0 w-full flex-1 flex-col">
 	<div class="min-h-0 flex-1" aria-hidden="true"></div>

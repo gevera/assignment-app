@@ -20,7 +20,13 @@ function nestFlatKeys(flat: Record<string, string>): Record<string, unknown> {
 	return result;
 }
 
-const config: Config = {
+type TranslationPayload = {
+	minutes?: number;
+	count?: number;
+	query?: string;
+};
+
+const config: Config<TranslationPayload> = {
 	loaders: [
 		{
 			locale: 'en',

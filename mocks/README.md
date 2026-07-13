@@ -41,3 +41,8 @@ All three accounts use the password `demo1234`:
 
 - The shape of `users.json` (we use it to test login).
 - The `id` and `slug` fields on `posts.json` (we link to specific posts during review).
+
+## Changes made during the assignment
+
+- Added landing-page keys to both `i18n.en.json` and `i18n.de.json` (identical key sets, values authored per locale): `home.meta.*`, `home.hero.ctaSecondary`, `home.features.{performance,i18n,a11y,insights}.*`, `home.pricing.*` (3 tiers × name/price/period/cta/feature1-3), and `home.social.*` (3 stats, 3 testimonials).
+- Added per-page meta-description keys to both dictionaries (`blog.meta.description`, `search.meta.description`, `login.meta.description`, `dashboard.meta.description`, `dashboard.items.meta.description`). Page `<title>`s reuse existing keys; the site-name suffix is appended in code.

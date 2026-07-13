@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { defaultLocale, localizedPath, t, addTranslations, setLocale } from '$lib/i18n';
+	import { SITE_NAME } from '$lib/seo';
 	import { Button, Heading } from '$ui';
 
 	const lang = $derived(page.error?.lang ?? page.data.lang ?? page.params.lang ?? defaultLocale);
@@ -12,6 +13,11 @@
 		void setLocale(lang);
 	});
 </script>
+
+<svelte:head>
+	<title>{page.status} — {$t('i18n.common.error')} — {SITE_NAME}</title>
+	<meta name="robots" content="noindex" />
+</svelte:head>
 
 <div class="flex min-h-0 w-full flex-1 flex-col">
 	<div class="min-h-0 flex-1" aria-hidden="true"></div>

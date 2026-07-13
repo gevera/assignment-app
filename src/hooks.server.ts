@@ -12,9 +12,15 @@ import {
 } from '$lib/i18n';
 import { readSessionUser } from '$lib/server/session';
 
+const META_PATHS = new Set(['/sitemap.xml', '/robots.txt']);
+
 export const handle: Handle = async ({ event, resolve }) => {
 	const { url, request, cookies } = event;
 	const { pathname } = url;
+
+	if (META_PATHS.has(pathname)) {
+		return resolve(event);
+	}
 
 	const supported = locales.get().map((l) => l.toLowerCase());
 	const segment = getFirstPathSegment(pathname);
