@@ -37,6 +37,8 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",
+		"test:unit:server": "vitest --project server",
+		"test:unit:client": "vitest --project client",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
 		"budget": "node scripts/check-bundle-budget.mjs",

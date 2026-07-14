@@ -44,7 +44,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm test:unit -- --run
+      - run: pnpm test:unit:server -- --run
 
   build:
     name: Build, budget, e2e, Lighthouse
@@ -63,7 +63,9 @@ jobs:
       - name: Bundle budget
         run: pnpm budget
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Browser component tests
+        run: pnpm test:unit:client -- --run
       - name: Playwright e2e
         run: pnpm test:e2e
         env:
