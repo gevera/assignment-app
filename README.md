@@ -40,7 +40,7 @@ After `pnpm build`, `scripts/check-bundle-budget.mjs` walks the Vite client mani
 
 ### Lighthouse CI (`pnpm lhci`)
 
-Mobile / Moto G Power–style throttling on `/en`, a prerendered blog slug, and `/en/dashboard/items` (Puppeteer mints a demo session cookie). Asserts Perf / A11y / SEO / Best Practices ≥ 95 and LCP &lt; 2s, CLS &lt; 0.1, TBT &lt; 200ms (INP is not available in LH navigation mode).
+Mobile / Moto G Power–style throttling on `/en`, a prerendered blog slug, and `/en/dashboard/items` (Puppeteer mints a demo viewer session cookie). Asserts Perf / A11y / SEO / Best Practices ≥ 95 and LCP &lt; 2s, CLS &lt; 0.1, TBT &lt; 200ms (INP is not available in LH navigation mode).
 
 ## Deployment (Vercel)
 

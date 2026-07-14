@@ -33,8 +33,7 @@
 
 <div class="py-section">
 	<h1
-		class="mb-6 text-3xl font-semibold text-fg"
-		style="font-family: system-ui, -apple-system, sans-serif"
+		style="margin: 0 0 1.5rem; font-family: system-ui, -apple-system, sans-serif; font-size: 1.875rem; font-weight: 600; line-height: 2.25rem; color: inherit"
 	>
 		{$t('i18n.dashboard.items.title')}
 	</h1>

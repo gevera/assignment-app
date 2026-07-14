@@ -14,6 +14,7 @@ module.exports = {
 				args: ['--no-sandbox', '--disable-dev-shm-usage']
 			},
 			settings: {
+				disableStorageReset: true,
 				formFactor: 'mobile',
 				throttlingMethod: 'simulate',
 				throttling: {
