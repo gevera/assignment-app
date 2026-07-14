@@ -13,14 +13,13 @@
 		const param = page.params.lang;
 		return param && isLocale(param) ? param : DEFAULT_LOCALE;
 	});
-	const { author, publishedAt, tags, coverColor, translations, readingTimeMinutes } = $derived(
-		data.post
-	);
-	const translation = $derived(translations[lang]);
+	const { author, publishedAt, tags, coverColor, translations, readingTimeMinutes, slug } =
+		$derived(data.post);
+	const { body, title, excerpt } = $derived(translations[lang]);
 	const postUrl = $derived(canonicalUrl({ siteUrl: SITE_URL, pathname: page.url.pathname }));
 
 	const paragraphs = $derived(
-		translation.body
+		body
 			.split(/\n\n+/)
 			.map((block) => block.trim())
 			.filter(Boolean)
@@ -37,8 +36,8 @@
 		jsonLdScript(
 			articleJsonLd({
 				url: postUrl,
-				headline: translation.title,
-				description: translation.excerpt,
+				headline: title,
+				description: excerpt,
 				datePublished: publishedAt,
 				authorName: author.name
 			})
@@ -53,18 +52,13 @@
 						name: $t('i18n.nav.blog'),
 						url: canonicalUrl({ siteUrl: SITE_URL, pathname: `/${lang}/blog` })
 					},
-					{ name: translation.title, url: postUrl }
+					{ name: title, url: postUrl }
 				])
 			)
 	);
 </script>
 
-<Meta
-	title={translation.title}
-	description={translation.excerpt}
-	ogType="article"
-	image="{postUrl}/og.png"
-/>
+<Meta {title} description={excerpt} ogType="article" image="{postUrl}/og.png" />
 
 <svelte:head>
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- <-escaped JSON built in $lib/seo -->
@@ -85,11 +79,16 @@
 			{/each}
 		</div>
 
-		<Heading class="text-4xl leading-tight sm:text-5xl">{translation.title}</Heading>
-		<p class="text-lg text-fg-muted">{translation.excerpt}</p>
+		<Heading
+			class="text-4xl leading-tight sm:text-5xl"
+			style="view-transition-name: post-title-{slug}"
+		>
+			{title}
+		</Heading>
+		<p class="text-lg text-fg-muted">{excerpt}</p>
 
 		<div class="flex flex-wrap items-center gap-2 text-sm text-fg-muted">
-			<AuthorAvatar {author} size="md" />
+			<AuthorAvatar name={author.name} color={author.avatarColor} size="md" />
 			<span class="font-medium text-fg">{author.name}</span>
 			<span aria-hidden="true">·</span>
 			<time datetime={publishedAt}>{formatDate(publishedAt, lang)}</time>

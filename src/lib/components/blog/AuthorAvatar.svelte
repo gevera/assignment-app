@@ -1,17 +1,17 @@
 <script lang="ts">
-	import type { PostAuthor } from '$lib/schemas';
 	import { contrastingInk } from '$lib/utils/contrast';
 
 	type Props = {
-		author: PostAuthor;
+		name: string;
+		color: string;
 		size?: 'sm' | 'md';
 		class?: string;
 	};
 
-	let { author, size = 'sm', class: className = '' }: Props = $props();
+	let { name, color, size = 'sm', class: className = '' }: Props = $props();
 
 	const initials = $derived(
-		author.name
+		name
 			.split(/\s+/)
 			.filter(Boolean)
 			.slice(0, 2)
@@ -20,15 +20,15 @@
 	);
 
 	const sizeClass = $derived(size === 'md' ? 'size-8 text-xs' : 'size-[18px] text-[9px]');
-	const ink = $derived(contrastingInk(author.avatarColor));
+	const ink = $derived(contrastingInk(color));
 </script>
 
 <span
 	class="inline-grid shrink-0 place-items-center rounded-full font-medium {sizeClass} {className}"
-	style:background-color={author.avatarColor}
+	style:background-color={color}
 	style:color={ink}
 	aria-hidden="true"
-	title={author.name}
+	title={name}
 >
 	{initials}
 </span>

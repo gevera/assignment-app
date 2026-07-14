@@ -49,7 +49,7 @@
 		</div>
 
 		<div class="flex flex-1 flex-col gap-2">
-			<Heading level={2} class="text-xl">
+			<Heading level={2} class="text-xl" style="view-transition-name: post-title-{post.slug}">
 				<a {href} class="text-fg hover:underline">{title}</a>
 			</Heading>
 			<p class="line-clamp-3 text-sm leading-relaxed text-fg-muted">{excerpt}</p>
@@ -59,7 +59,7 @@
 			class="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3"
 		>
 			<div class="flex flex-wrap items-center gap-2 text-sm text-fg-muted">
-				<AuthorAvatar {author} />
+				<AuthorAvatar name={author.name} color={author.avatarColor} />
 				<span class="font-medium text-fg">{author.name}</span>
 				<span aria-hidden="true">·</span>
 				<time datetime={publishedAt}>{formatDate(publishedAt, lang)}</time>

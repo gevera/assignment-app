@@ -209,7 +209,7 @@
 							<span class="block truncate font-medium text-fg">{title}</span>
 							<span class="mt-0.5 line-clamp-1 text-xs text-fg-muted">{excerpt}</span>
 							<span class="mt-1 flex items-center gap-1.5 text-xs text-fg-muted">
-								<AuthorAvatar {author} />
+								<AuthorAvatar name={author.name} color={author.avatarColor} />
 								<span>{author.name}</span>
 								<span aria-hidden="true">·</span>
 								<time datetime={publishedAt}>{formatDate(publishedAt, lang)}</time>
