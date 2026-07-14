@@ -1,3 +1,4 @@
+/** Format a number as USD currency for the given locale. */
 export function formatCurrency(value: number, locale = 'en-US'): string {
 	return new Intl.NumberFormat(locale, {
 		style: 'currency',
@@ -6,6 +7,7 @@ export function formatCurrency(value: number, locale = 'en-US'): string {
 	}).format(value);
 }
 
+/** Format a fraction as a localized percentage string. */
 export function formatPercent(value: number, locale = 'en-US'): string {
 	return new Intl.NumberFormat(locale, {
 		style: 'percent',
@@ -14,6 +16,7 @@ export function formatPercent(value: number, locale = 'en-US'): string {
 	}).format(value);
 }
 
+/** Format a date or ISO string as a short localized calendar date. */
 export function formatDate(value: string | Date, locale = 'en-GB'): string {
 	const date = typeof value === 'string' ? new Date(value) : value;
 	return new Intl.DateTimeFormat(locale, {

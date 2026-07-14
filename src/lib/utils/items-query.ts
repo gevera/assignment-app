@@ -29,6 +29,7 @@ export type ItemsQuery = z.infer<typeof itemsQuerySchema>;
 export type ItemsSort = z.infer<typeof itemsSortSchema>;
 export type ItemsDir = z.infer<typeof itemsDirSchema>;
 
+/** Parse and validate dashboard items query params from a URL. */
 export function parseItemsQuery(url: URL): ItemsQuery {
 	const params = url.searchParams;
 	return itemsQuerySchema.parse({
@@ -41,6 +42,7 @@ export function parseItemsQuery(url: URL): ItemsQuery {
 	});
 }
 
+/** Serialize an items query into non-default URLSearchParams. */
 export function itemsQueryToSearchParams(
 	query: ItemsQuery,
 	options?: { fail?: boolean }

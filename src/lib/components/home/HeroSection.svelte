@@ -10,10 +10,7 @@
 
 <section aria-labelledby="hero-title" class="py-10 text-center sm:py-16">
 	<div class="mx-auto flex max-w-2xl flex-col items-center gap-6">
-		<h1
-			id="hero-title"
-			class="font-display text-4xl font-semibold tracking-tight text-fg sm:text-5xl"
-		>
+		<h1 id="hero-title" class="font-sans text-4xl font-semibold tracking-tight text-fg sm:text-5xl">
 			{$t('i18n.home.hero.title')}
 		</h1>
 		<p class="text-lg text-fg-muted">{$t('i18n.home.hero.subtitle')}</p>

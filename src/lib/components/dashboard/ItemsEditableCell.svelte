@@ -3,7 +3,7 @@
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { t } from '$lib/i18n';
-	import { actionFailureMessage, isActionSuccess } from '$lib/utils';
+	import { actionFailureMessage, isActionSuccess } from '$lib/utils/matchers';
 
 	type Props = {
 		itemId: string;
@@ -31,10 +31,12 @@
 	const fail = $derived(page.url.searchParams.get('fail') === '1');
 	const draftValue = $derived(draft ?? String(value));
 
+	/** Clears the local draft value. */
 	function resetDraft() {
 		draft = null;
 	}
 
+	/** Checks whether a draft value matches the saved field value. */
 	function valuesEqual(next: string): boolean {
 		if (field === 'name') return next === String(value);
 		const parsed = Number(next);

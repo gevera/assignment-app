@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import {
+	postsQueryPath,
+	postsQueryToSearchParams,
+	type PostsQuery,
+	type PostsSort
+} from './posts-query-path';
+
+export { postsQueryPath, postsQueryToSearchParams };
+export type { PostsQuery, PostsSort };
 
 export const POSTS_PER_PAGE = 6;
 export const SEARCH_RECENT_LIMIT = 5;
@@ -13,13 +22,12 @@ export const postsQuerySchema = z.object({
 	limit: z.coerce.number().int().positive().optional()
 });
 
-export type PostsQuery = z.infer<typeof postsQuerySchema>;
-export type PostsSort = z.infer<typeof postsSortSchema>;
-
+/** Parse a fuzzy flag from search params ('1' or 'true'). */
 function parseFuzzy(value: string | null): boolean {
 	return value === '1' || value === 'true';
 }
 
+/** Parse and validate posts search query params from a URL. */
 export function parsePostsQuery(url: URL): PostsQuery {
 	const params = url.searchParams;
 	const q = params.get('q') ?? '';
@@ -41,26 +49,6 @@ export function parsePostsQuery(url: URL): PostsQuery {
 	});
 }
 
-export function postsQueryToSearchParams(query: PostsQuery): URLSearchParams {
-	const params = new URLSearchParams();
-	const defaultSort = query.q ? 'relevance' : 'date';
-
-	if (query.q) params.set('q', query.q);
-	if (query.tag) params.set('tag', query.tag);
-	if (query.sort !== defaultSort) params.set('sort', query.sort);
-	if (query.fuzzy) params.set('fuzzy', '1');
-	if (query.limit != null) params.set('limit', String(query.limit));
-
-	return params;
-}
-
-/** Pathname (+ optional search) for the search API — pass through `resolve()` before fetch/goto. */
-export function postsQueryPath({ lang, query }: { lang: string; query: PostsQuery }): `/${string}` {
-	const qs = postsQueryToSearchParams(query).toString();
-	const path = `/${lang}/search`;
-	return (qs ? `${path}?${qs}` : path) as `/${string}`;
-}
-
 export const blogSortSchema = z.enum(['date', 'title']);
 
 export type BlogSort = z.infer<typeof blogSortSchema>;
@@ -71,6 +59,7 @@ export type BlogQuery = {
 	sort: BlogSort;
 };
 
+/** Parse blog listing page, tag, and sort from a URL. */
 export function parseBlogQuery(url: URL): BlogQuery {
 	const params = url.searchParams;
 	const pageRaw = Number(params.get('page') ?? '1');
@@ -86,6 +75,7 @@ export function parseBlogQuery(url: URL): BlogQuery {
 	};
 }
 
+/** Serialize a blog query into non-default URLSearchParams. */
 export function blogQueryToSearchParams(query: BlogQuery): URLSearchParams {
 	const params = new URLSearchParams();
 	if (query.tag) params.set('tag', query.tag);

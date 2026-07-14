@@ -1,6 +1,7 @@
 import type { LoginInput, SessionUser } from '$lib/schemas';
 import { getAllUsers } from './users';
 
+/** Verify credentials and return a session-safe user, or null. */
 export function authenticateUser({ email, password }: LoginInput): SessionUser | null {
 	const user = getAllUsers().find((u) => u.email === email && u.password === password);
 	if (!user) return null;

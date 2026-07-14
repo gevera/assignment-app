@@ -23,16 +23,19 @@ export type ItemUpdate = {
 	status?: ItemStatus;
 };
 
+/** Return every dashboard item from the in-memory data store. */
 export function getAllItems(): Item[] {
 	return getItems();
 }
 
+/** Compare two items for the active sort column and direction. */
 function compareItems(a: Item, b: Item, sort: ItemsSort, dir: ItemsDir): number {
 	const direction = dir === 'asc' ? 1 : -1;
 	const [av, bv] = itemSortValues({ a, b, sort });
 	return compareSortValues({ av, bv, direction });
 }
 
+/** Filter, sort, and paginate dashboard items for the items table. */
 export function queryItems(input: ItemsQuery): PagedItems {
 	const all = getItems();
 	let rows = all;
@@ -67,6 +70,7 @@ export function queryItems(input: ItemsQuery): PagedItems {
 	};
 }
 
+/** Apply a field patch to an item and bump its updatedAt timestamp. */
 export function updateItem(id: string, patch: ItemUpdate): Item | null {
 	const items = getItems();
 	const item = items.find((row) => row.id === id);
@@ -80,7 +84,7 @@ export function updateItem(id: string, patch: ItemUpdate): Item | null {
 	return item;
 }
 
-/** @deprecated Prefer updateItem */
+/** @deprecated Prefer updateItem — update only the item name. */
 export function updateItemName(id: string, name: string): Item | null {
 	return updateItem(id, { name });
 }

@@ -6,6 +6,7 @@ import { parsePostsQuery } from '$lib/utils/posts-query';
 
 export const prerender = false;
 
+/** JSON search endpoint returning filtered/sorted posts for the dialog. */
 export const GET: RequestHandler = ({ url, params }) => {
 	const lang = params.lang && isLocale(params.lang) ? params.lang : DEFAULT_LOCALE;
 	const query = parsePostsQuery(url);

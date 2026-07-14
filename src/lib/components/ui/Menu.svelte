@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { match, P } from 'ts-pattern';
-	import { menuKeyCommand, menuTriggerCommand } from '$lib/utils';
+	import { menuKeyCommand, menuTriggerCommand } from '$lib/utils/matchers';
 
 	export type MenuOption = {
 		value: string;
@@ -49,6 +49,7 @@
 	let rootEl: HTMLDivElement | undefined = $state();
 	let menuEl: HTMLUListElement | undefined = $state();
 
+	/** Stores the root menu container element reference. */
 	function attachRoot(node: HTMLDivElement) {
 		rootEl = node;
 		return () => {
@@ -56,6 +57,7 @@
 		};
 	}
 
+	/** Stores the menu list element reference. */
 	function attachMenu(node: HTMLUListElement) {
 		menuEl = node;
 		return () => {
@@ -63,15 +65,18 @@
 		};
 	}
 
+	/** Returns all focusable menu item buttons in the menu. */
 	function getItemButtons(): HTMLButtonElement[] {
 		if (!menuEl) return [];
 		return [...menuEl.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')];
 	}
 
+	/** Moves focus to the menu item at the given index. */
 	function focusItem(index: number) {
 		getItemButtons()[index]?.focus();
 	}
 
+	/** Opens the menu and focuses the item at the given index. */
 	function openMenu(index = 0) {
 		if (disabled || options.length === 0) return;
 		activeIndex = Math.max(0, Math.min(index, options.length - 1));
@@ -79,6 +84,7 @@
 		queueMicrotask(() => focusItem(activeIndex));
 	}
 
+	/** Closes the menu and optionally restores focus to the trigger. */
 	function closeMenu(restoreFocus = true) {
 		if (!open) return;
 		open = false;
@@ -87,11 +93,13 @@
 		}
 	}
 
+	/** Closes the menu and invokes the selection callback. */
 	function selectOption(value: string) {
 		closeMenu(true);
 		onSelect(value);
 	}
 
+	/** Toggles the menu open or closed when the trigger is clicked. */
 	function onTriggerClick(event: MouseEvent) {
 		event.preventDefault();
 		if (open) {
@@ -101,6 +109,7 @@
 		openMenu(0);
 	}
 
+	/** Handles keyboard commands to open the menu from the trigger. */
 	function onTriggerKeydown(event: KeyboardEvent) {
 		if (disabled) return;
 
@@ -113,6 +122,7 @@
 			.exhaustive();
 	}
 
+	/** Handles arrow key navigation and Escape within the open menu. */
 	function onMenuKeydown(event: KeyboardEvent) {
 		if (!open) return;
 
@@ -130,6 +140,7 @@
 			.exhaustive();
 	}
 
+	/** Closes the menu when clicking outside the root element. */
 	function onDocumentPointerDown(event: PointerEvent) {
 		if (!open || !rootEl) return;
 		const target = event.target as Node | null;
@@ -168,7 +179,7 @@
 				<li role="none">
 					<button
 						type="button"
-						class="flex w-full items-center px-3 py-1.5 text-left text-sm text-fg hover:bg-surface focus:bg-surface focus:outline-none"
+						class="flex w-full items-center px-3 py-1.5 text-left text-sm text-fg hover:bg-surface focus-visible:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset"
 						role="menuitem"
 						tabindex={index === activeIndex ? 0 : -1}
 						onclick={() => selectOption(option.value)}

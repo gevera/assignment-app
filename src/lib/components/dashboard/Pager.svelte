@@ -31,6 +31,7 @@
 		return pages;
 	});
 
+	/** Navigates to the selected items dashboard page. */
 	function goToPage(target: number) {
 		if (target < 1 || target > pageCount || target === currentPage) return;
 		void goto(resolve(itemsQueryPath(lang, { ...query, page: target }, { fail })), {
@@ -46,7 +47,7 @@
 	<div>
 		{$t('i18n.dashboard.items.showing', { start, end, total })}
 	</div>
-	<div class="flex gap-1">
+	<nav class="flex gap-1" aria-label={$t('i18n.dashboard.items.pagination')}>
 		<button
 			type="button"
 			class="rounded-md border border-border bg-surface-elevated px-2.5 py-1 font-mono text-xs font-semibold text-fg disabled:cursor-not-allowed disabled:opacity-40 hover:enabled:border-focus hover:enabled:text-focus"
@@ -77,5 +78,5 @@
 		>
 			›
 		</button>
-	</div>
+	</nav>
 </div>

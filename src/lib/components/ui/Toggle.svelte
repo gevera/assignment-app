@@ -17,6 +17,7 @@
 
 	const switchId = $props.id();
 
+	/** Flips the switch checked state and fires the change callback. */
 	function toggle() {
 		if (disabled) return;
 		checked = !checked;

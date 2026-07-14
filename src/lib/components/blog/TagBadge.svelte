@@ -19,6 +19,7 @@
 		return param && isLocale(param) ? param : DEFAULT_LOCALE;
 	});
 
+	/** Navigates to the blog filtered by this tag. */
 	function onClick(event: MouseEvent) {
 		event.preventDefault();
 		event.stopPropagation();

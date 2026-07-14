@@ -1,5 +1,6 @@
 import { SITE_NAME } from './site';
 
+/** Build Organization JSON-LD for the site. */
 export function organizationJsonLd({ siteUrl }: { siteUrl: string }): Record<string, unknown> {
 	return {
 		'@context': 'https://schema.org',
@@ -10,6 +11,7 @@ export function organizationJsonLd({ siteUrl }: { siteUrl: string }): Record<str
 	};
 }
 
+/** Build Article JSON-LD for a blog post page. */
 export function articleJsonLd({
 	url,
 	headline,
@@ -34,6 +36,7 @@ export function articleJsonLd({
 	};
 }
 
+/** Build BreadcrumbList JSON-LD from ordered name/url crumbs. */
 export function breadcrumbJsonLd(items: { name: string; url: string }[]): Record<string, unknown> {
 	return {
 		'@context': 'https://schema.org',
@@ -47,6 +50,7 @@ export function breadcrumbJsonLd(items: { name: string; url: string }[]): Record
 	};
 }
 
+/** Serialize JSON-LD into a safe inline script element string. */
 export function jsonLdScript(data: Record<string, unknown>): string {
 	const json = JSON.stringify(data).replace(/</g, '\\u003c');
 	return `<script type="application/ld+json">${json}</script>`;

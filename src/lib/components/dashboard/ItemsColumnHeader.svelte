@@ -15,6 +15,7 @@
 	const active = $derived(activeSort === column.key);
 	const ariaSort = $derived(!active ? 'none' : dir === 'asc' ? 'ascending' : 'descending');
 
+	/** Activates column sorting on Enter or Space. */
 	function onKeydown(event: KeyboardEvent) {
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();

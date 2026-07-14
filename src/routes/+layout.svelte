@@ -1,6 +1,8 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
-	import { Navbar, SearchDialog, SkipLink } from '$lib/components';
+	import LazySearchDialog from '$lib/components/blog/LazySearchDialog.svelte';
+	import Navbar from '$lib/components/Navbar.svelte';
+	import SkipLink from '$lib/components/SkipLink.svelte';
 	import { Container } from '$ui';
 	import './layout.css';
 
@@ -28,4 +30,4 @@
 	</footer>
 </div>
 
-<SearchDialog />
+<LazySearchDialog />

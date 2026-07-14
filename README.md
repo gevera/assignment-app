@@ -1,42 +1,43 @@
-# sv
+# Assignment App
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-pnpm dlx sv@0.13.2 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" playwright tailwindcss="plugins:typography,forms" sveltekit-adapter="adapter:node" mcp="ide:claude-code,cursor+setup:local" devtools-json --install pnpm assignment_app
-```
+SvelteKit marketing surface + authenticated dashboard (en/de).
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+pnpm install
+pnpm dev
 ```
+
+Copy `.env.example` to `.env` and set `AUTH_SECRET` (min 32 characters).
 
 ## Building
 
-To create a production version of your app:
-
 ```sh
-npm run build
+pnpm build
+pnpm preview
 ```
 
-You can preview the production build with `npm run preview`.
+## Quality gates
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```sh
+pnpm lint
+pnpm check
+pnpm test:unit -- --run
+pnpm build && pnpm budget   # initial-route JS gzip budgets
+pnpm lhci                   # Lighthouse CI (build first)
+pnpm ci                     # local smoke: lint → check → unit → build → budget
+```
+
+### Bundle budget (`pnpm budget`)
+
+After `pnpm build`, `scripts/check-bundle-budget.mjs` walks the Vite client manifest for each route’s entry + layout/page node chain (static `imports` only — dynamic chunks like SearchDialog are excluded).
+
+| Surface         | Budget (gzip) |
+| --------------- | ------------- |
+| Public home     | ≤ 80 KB       |
+| Dashboard items | ≤ 150 KB      |
+
+### Lighthouse CI (`pnpm lhci`)
+
+Mobile / Moto G Power–style throttling on `/en`, a prerendered blog slug, and `/en/dashboard/items` (Puppeteer mints a demo session cookie). Asserts Perf / A11y / SEO / Best Practices ≥ 95 and LCP &lt; 2s, CLS &lt; 0.1, TBT &lt; 200ms (INP is not available in LH navigation mode).

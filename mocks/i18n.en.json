@@ -129,5 +129,8 @@
 	"common.retry": "Try again",
 	"common.save": "Save",
 	"common.cancel": "Cancel",
+	"a11y.skipToContent": "Skip to content",
+	"dashboard.items.tableCaption": "Campaigns",
+	"dashboard.items.pagination": "Campaign pagination",
 	"footer.copy": "© 2026 Demo Co."
 }

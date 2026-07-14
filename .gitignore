@@ -25,3 +25,5 @@ vite.config.ts.timestamp-*
 test-results
 
 .pnpm-store
+.lighthouseci
+visual.e2e.ts-snapshots

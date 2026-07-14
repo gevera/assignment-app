@@ -22,6 +22,7 @@
 	const fail = $derived(page.url.searchParams.get('fail') === '1');
 	const lang = $derived(page.params.lang ?? 'en');
 
+	/** Navigates to the items dashboard with the given query. */
 	function navigate(next: ItemsQuery) {
 		void goto(resolve(itemsQueryPath(lang, next, { fail })), {
 			keepFocus: true,
@@ -29,6 +30,7 @@
 		});
 	}
 
+	/** Debounces search input and navigates with the new query string. */
 	function onSearchInput(event: Event) {
 		const value = (event.currentTarget as HTMLInputElement).value;
 		clearTimeout(debounceTimer);
@@ -37,11 +39,13 @@
 		}, 200);
 	}
 
+	/** Navigates with the selected status filter. */
 	function onStatusChange(event: Event) {
 		const value = (event.currentTarget as HTMLSelectElement).value as ItemsQuery['status'];
 		navigate({ ...query, status: value, page: 1 });
 	}
 
+	/** Navigates with the selected channel filter. */
 	function onChannelChange(event: Event) {
 		const value = (event.currentTarget as HTMLSelectElement).value as ItemsQuery['channel'];
 		navigate({ ...query, channel: value, page: 1 });
@@ -51,7 +55,7 @@
 <div class="mb-3.5 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
 	<input
 		type="search"
-		class="h-11 w-full min-w-0 rounded-md border border-border bg-[color-mix(in_oklab,var(--fg)_6%,var(--surface))] px-3 text-sm text-fg outline-none transition-colors placeholder:text-fg-muted focus:border-focus focus:ring-2 focus:ring-focus/20 sm:min-w-[220px] sm:flex-1 md:max-w-xs md:flex-none"
+		class="h-11 w-full min-w-0 rounded-md border border-border bg-[color-mix(in_oklab,var(--fg)_6%,var(--surface))] px-3 text-sm text-fg outline-none transition-colors placeholder:text-fg-muted focus-visible:border-focus focus-visible:ring-2 focus-visible:ring-focus/20 sm:min-w-[220px] sm:flex-1 md:max-w-xs md:flex-none"
 		placeholder={$t('i18n.dashboard.items.searchPlaceholder')}
 		value={query.q}
 		oninput={onSearchInput}

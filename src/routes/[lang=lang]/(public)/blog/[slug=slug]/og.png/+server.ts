@@ -12,6 +12,7 @@ import sans400 from '@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-nor
 
 export const prerender = true;
 
+/** Enumerate prerender entries for every locale and post OG image. */
 export const entries: EntryGenerator = () => {
 	const posts = getAllPosts();
 
@@ -24,6 +25,7 @@ const fg = '#1a1917';
 const fgMuted = '#6b6560';
 const border = '#e4dfd8';
 
+/** Escape text for safe use inside the OG HTML template. */
 function escapeHtml(value: string): string {
 	return value
 		.replaceAll('&', '&amp;')
@@ -32,6 +34,7 @@ function escapeHtml(value: string): string {
 		.replaceAll('"', '&quot;');
 }
 
+/** Render a localized Open Graph PNG for the post. */
 export const GET: RequestHandler = async ({ params }) => {
 	const post = getPostBySlug(params.slug);
 

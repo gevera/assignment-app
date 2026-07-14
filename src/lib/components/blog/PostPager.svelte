@@ -32,6 +32,7 @@
 		return pages;
 	});
 
+	/** Navigates to the selected blog results page. */
 	function goToPage(target: number) {
 		if (target < 1 || target > pageCount || target === currentPage) return;
 		void goto(resolve(blogQueryPath({ lang, query: { ...query, page: target } })), {

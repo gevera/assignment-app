@@ -5,11 +5,17 @@
 	type Props = {
 		message?: string;
 		class?: string;
+		onretry?: () => void;
 	};
 
-	let { message, class: className = '' }: Props = $props();
+	let { message, class: className = '', onretry }: Props = $props();
 
+	/** Retry via the caller's handler, or invalidate all load data by default. */
 	async function retry() {
+		if (onretry) {
+			onretry();
+			return;
+		}
 		await invalidateAll();
 	}
 </script>

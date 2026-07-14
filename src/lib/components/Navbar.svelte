@@ -5,13 +5,8 @@
 	import BurgerButton from './BurgerButton.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
 	import { Button, Container, NavLink } from '$ui';
-	import { LOCALES, localizedPath, t, type Locale } from '$lib/i18n';
+	import { LOCALES, localizedPath, t } from '$lib/i18n';
 	import { openSearchDialog } from '$lib/search/dialog';
-	import en from '../../../mocks/i18n.en.json';
-	import de from '../../../mocks/i18n.de.json';
-
-	const catalogs = { en, de } satisfies Record<Locale, typeof en>;
-	type CatalogKey = keyof typeof en;
 
 	const lang = $derived(page.data.lang ?? page.params.lang ?? 'en');
 	const user = $derived(page.data.user);
@@ -23,7 +18,7 @@
 	);
 	const logoutAction = $derived(`${localizedPath({ lang, path: '/login' })}?/logout`);
 
-	type NavItem = { path: string; labelKey: CatalogKey; match?: 'exact' | 'prefix' };
+	type NavItem = { path: string; labelKey: string; match?: 'exact' | 'prefix' };
 
 	const publicLinks = $derived<NavItem[]>([
 		{ path: '', labelKey: 'nav.home', match: 'exact' },
@@ -43,25 +38,30 @@
 		menuOpen = false;
 	});
 
+	/** Toggles the mobile navigation menu open or closed. */
 	function toggleMenu() {
 		menuOpen = !menuOpen;
 	}
 
+	/** Closes the mobile navigation menu. */
 	function closeMenu() {
 		menuOpen = false;
 	}
 
+	/** Closes the menu and opens the search dialog. */
 	function onSearchClick() {
 		closeMenu();
 		openSearchDialog();
 	}
 
+	/** Closes the mobile menu when Escape is pressed. */
 	function onWindowKeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape' && menuOpen) {
 			menuOpen = false;
 		}
 	}
 
+	/** Determines whether a nav link matches the current route. */
 	function isActive(item: NavItem): boolean {
 		if (item.match === 'exact') {
 			return route === item.path || (item.path === '' && route === '');
@@ -69,17 +69,6 @@
 		return route === item.path || route.startsWith(`${item.path}/`);
 	}
 </script>
-
-{#snippet stableLabel(key: CatalogKey)}
-	<span class="inline-grid justify-items-center">
-		{#each LOCALES as locale (locale)}
-			<span class="invisible col-start-1 row-start-1 whitespace-nowrap" aria-hidden="true">
-				{catalogs[locale][key]}
-			</span>
-		{/each}
-		<span class="col-start-1 row-start-1 whitespace-nowrap">{$t(`i18n.${key}`)}</span>
-	</span>
-{/snippet}
 
 <svelte:window onkeydown={onWindowKeydown} />
 
@@ -97,7 +86,7 @@
 				{#each links as item (item.path)}
 					<li>
 						<NavLink href={localizedPath({ lang, path: item.path })} active={isActive(item)}>
-							{@render stableLabel(item.labelKey)}
+							{$t(`i18n.${item.labelKey}`)}
 						</NavLink>
 					</li>
 				{/each}
@@ -110,12 +99,29 @@
 						aria-haspopup="dialog"
 						onclick={onSearchClick}
 					>
-						{@render stableLabel('nav.search')}
+						{$t('i18n.nav.search')}
 					</Button>
 				</li>
 			</ul>
 
 			<div class="ml-auto flex shrink-0 items-center gap-1">
+				<div class="mr-4">
+					{#if user}
+						<form method="POST" action={logoutAction} use:enhance class="hidden sm:contents">
+							<Button variant="ghost" type="submit" class="w-29 cursor-pointer">
+								{$t('i18n.nav.logout')}
+							</Button>
+						</form>
+					{:else}
+						<Button
+							href={localizedPath({ lang, path: '/login' })}
+							class="hidden w-29 sm:inline-flex"
+						>
+							{$t('i18n.nav.login')}
+						</Button>
+					{/if}
+				</div>
+
 				<div
 					class="inline-flex h-8 items-center rounded-full border border-border bg-surface p-0.5"
 					role="group"
@@ -137,20 +143,6 @@
 				</div>
 
 				<ThemeToggle />
-
-				{#if user}
-					<form method="POST" action={logoutAction} use:enhance class="hidden sm:block">
-						<Button variant="ghost" type="submit" class="cursor-pointer">
-							{@render stableLabel('nav.logout')}
-						</Button>
-					</form>
-				{:else}
-					<div class="hidden sm:block">
-						<Button href={localizedPath({ lang, path: '/login' })}>
-							{@render stableLabel('nav.login')}
-						</Button>
-					</div>
-				{/if}
 
 				<BurgerButton
 					open={menuOpen}

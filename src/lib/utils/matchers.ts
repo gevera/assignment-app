@@ -109,6 +109,7 @@ export type ResolveLocaleRoutingInput = {
 
 const DEFAULT_ACTION_FAILURE_MESSAGE = 'dashboard.items.editFailed';
 
+/** Classify the first path segment as a supported, unsupported, or missing locale. */
 export function classifyLocaleSegment({
 	segment,
 	supported
@@ -124,6 +125,7 @@ export function classifyLocaleSegment({
 		.otherwise(() => ({ kind: 'missing' as const }));
 }
 
+/** Decide the active locale and whether the request should redirect into it. */
 export function resolveLocaleRouting({
 	kind,
 	preferred
@@ -144,6 +146,7 @@ export function resolveLocaleRouting({
 		.exhaustive();
 }
 
+/** Convert an update-field form payload into an item patch object. */
 export function fieldToPatch(data: UpdateFieldData): FieldPatch {
 	return match(data)
 		.with({ field: 'name', value: P.select() }, (name) => ({ name }))
@@ -153,6 +156,7 @@ export function fieldToPatch(data: UpdateFieldData): FieldPatch {
 		.exhaustive();
 }
 
+/** Toggle or pick the next sort direction for a table column header click. */
 export function nextSortDirection({ sort, dir, key }: NextSortDirectionInput): ItemsDir {
 	return match({ sameColumn: sort === key, key, dir })
 		.with({ sameColumn: true, dir: 'asc' }, () => 'desc' as const)
@@ -161,6 +165,7 @@ export function nextSortDirection({ sort, dir, key }: NextSortDirectionInput): I
 		.otherwise(() => 'asc' as const);
 }
 
+/** Extract the comparable sort values for two items on the given column. */
 export function itemSortValues({
 	a,
 	b,
@@ -171,6 +176,7 @@ export function itemSortValues({
 		.otherwise((key) => [a[key], b[key]] as [string | number, string | number]);
 }
 
+/** Compare two sort values with the given ascending or descending multiplier. */
 export function compareSortValues({ av, bv, direction }: CompareSortValuesInput): number {
 	return match([av, bv] as const)
 		.with([P.string, P.string], ([left, right]) => left.localeCompare(right) * direction)
@@ -181,12 +187,14 @@ export function compareSortValues({ av, bv, direction }: CompareSortValuesInput)
 		});
 }
 
+/** Return whether a SvelteKit action result represents success. */
 export function isActionSuccess({ result }: ActionResultInput): boolean {
 	return match(result)
 		.with({ type: 'success' }, () => true)
 		.otherwise(() => false);
 }
 
+/** Pull a failure message from an action result, or return the fallback key. */
 export function actionFailureMessage({
 	result,
 	fallback = DEFAULT_ACTION_FAILURE_MESSAGE
@@ -196,6 +204,7 @@ export function actionFailureMessage({
 		.otherwise(() => fallback);
 }
 
+/** Map a keyboard key on the menu trigger to an open or noop command. */
 export function menuTriggerCommand({
 	key,
 	lastIndex
@@ -206,6 +215,7 @@ export function menuTriggerCommand({
 		.otherwise(() => ({ kind: 'noop' as const }));
 }
 
+/** Map a keyboard key inside an open menu to focus, close, or noop. */
 export function menuKeyCommand({ key, activeIndex, length }: MenuKeyCommandInput): MenuKeyCommand {
 	return match(key)
 		.with('Escape', () => ({
@@ -231,6 +241,7 @@ export function menuKeyCommand({ key, activeIndex, length }: MenuKeyCommandInput
 		.otherwise(() => ({ kind: 'noop' as const }));
 }
 
+/** Classify the Enter key target as the search input, an option, or other. */
 export function classifySearchEnterTarget({ tagName, role }: SearchTargetInfo): SearchEnterTarget {
 	return match({ tagName: tagName?.toUpperCase(), role })
 		.with({ tagName: 'INPUT' }, () => 'input' as const)
@@ -238,6 +249,7 @@ export function classifySearchEnterTarget({ tagName, role }: SearchTargetInfo): 
 		.otherwise(() => 'other' as const);
 }
 
+/** Map search dialog keyboard shortcuts to toggle, focus, select, or noop. */
 export function searchKeyCommand({
 	key,
 	ctrlOrMeta,
@@ -271,6 +283,7 @@ export function searchKeyCommand({
 		.otherwise(() => ({ kind: 'noop' as const }));
 }
 
+/** Map dialog keyboard input to close, focus-trap, or noop commands. */
 export function dialogKeyCommand({
 	key,
 	shiftKey,

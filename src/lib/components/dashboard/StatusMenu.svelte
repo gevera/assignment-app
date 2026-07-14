@@ -6,7 +6,7 @@
 	import { Menu } from '$ui';
 	import { t } from '$lib/i18n';
 	import { itemStatusSchema, type ItemStatus } from '$lib/schemas';
-	import { actionFailureMessage, isActionSuccess } from '$lib/utils';
+	import { actionFailureMessage, isActionSuccess } from '$lib/utils/matchers';
 
 	type Props = {
 		itemId: string;
@@ -20,6 +20,7 @@
 	let saving = $state(false);
 	let formEl: HTMLFormElement | undefined = $state();
 
+	/** Stores the form element reference for programmatic submission. */
 	function attachForm(node: HTMLFormElement) {
 		formEl = node;
 		return () => {
@@ -36,6 +37,7 @@
 		}))
 	);
 
+	/** Updates the draft status and submits the form. */
 	function handleSelect(value: string) {
 		if (saving || value === (draft ?? status)) return;
 		draft = value as ItemStatus;

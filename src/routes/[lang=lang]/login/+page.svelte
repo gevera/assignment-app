@@ -26,6 +26,7 @@
 		};
 	});
 
+	/** Hides server and client validation errors on input. */
 	function clearErrors() {
 		hideServerFeedback = true;
 		clientErrors = {};

@@ -3,6 +3,7 @@ import type { LayoutServerLoad } from './$types';
 
 export const prerender = false;
 
+/** Require a session and expose the authenticated user to dashboard routes. */
 export const load: LayoutServerLoad = async ({
 	locals: { user },
 	params: { lang },

@@ -2,6 +2,7 @@ import i18n, { type Config } from 'sveltekit-i18n';
 import { DEFAULT_LOCALE } from './locales';
 import { resolve } from '$app/paths';
 
+/** Nest a flat dotted-key translation map into a hierarchical object. */
 function nestFlatKeys(flat: Record<string, string>): Record<string, unknown> {
 	const result: Record<string, unknown> = {};
 
@@ -46,6 +47,7 @@ const config: Config<TranslationPayload> = {
 	]
 };
 
+/** Build an app-resolved path prefixed with the given locale. */
 export const localizedPath = ({ lang, path }: { lang: string; path: string }) => {
 	return resolve(path ? `/${lang}${path}` : `/${lang}`);
 };

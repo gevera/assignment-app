@@ -2,7 +2,8 @@ import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod';
 import { itemStatusSchema } from '$lib/schemas';
 import { getAllItems, queryItems, updateItem } from '$lib/server';
-import { fieldToPatch, parseItemsQuery } from '$lib/utils';
+import { parseItemsQuery } from '$lib/utils/items-query';
+import { fieldToPatch } from '$lib/utils/matchers';
 import type { Actions, PageServerLoad } from './$types';
 
 const updateFieldSchema = z.discriminatedUnion('field', [
@@ -28,6 +29,7 @@ const updateFieldSchema = z.discriminatedUnion('field', [
 	})
 ]);
 
+/** Load filtered, sorted, paginated items for the dashboard table. */
 export const load: PageServerLoad = ({ depends, locals, url }) => {
 	depends('app:items');
 
@@ -38,11 +40,13 @@ export const load: PageServerLoad = ({ depends, locals, url }) => {
 		query,
 		canEdit,
 		catalogTotal: getAllItems().length,
-		result: Promise.resolve().then(() => queryItems(query))
+		result: queryItems(query)
 	};
 };
 
+/** Form actions for the dashboard items page. */
 export const actions: Actions = {
+	/** Validate and apply an inline field edit to an item. */
 	updateField: async ({ request, locals, url }) => {
 		if (!locals.user) {
 			error(401, 'Unauthorized');

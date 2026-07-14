@@ -28,6 +28,7 @@
 		};
 	});
 
+	/** Navigates to the blog index with the given query parameters. */
 	function navigate(next: BlogQuery) {
 		void goto(resolve(blogQueryPath({ lang, query: next })), {
 			keepFocus: true,
@@ -35,10 +36,12 @@
 		});
 	}
 
+	/** Removes the tag filter and resets to page one. */
 	function clearTag() {
 		navigate({ ...query, tag: '', page: 1 });
 	}
 
+	/** Changes the blog sort order when a different option is selected. */
 	function setSort(blogSort: BlogSort) {
 		if (blogSort === sort) return;
 		navigate({ ...query, sort: blogSort, page: 1 });

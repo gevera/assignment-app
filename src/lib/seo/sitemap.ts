@@ -7,6 +7,7 @@ export type SitemapEntry = {
 	lastmod?: string;
 };
 
+/** Escape a string for safe inclusion in XML text or attributes. */
 function escapeXml(value: string): string {
 	return value
 		.replaceAll('&', '&amp;')
@@ -15,6 +16,7 @@ function escapeXml(value: string): string {
 		.replaceAll('"', '&quot;');
 }
 
+/** Build a multilingual sitemap XML document for the given entries. */
 export function buildSitemapXml({
 	siteUrl,
 	entries

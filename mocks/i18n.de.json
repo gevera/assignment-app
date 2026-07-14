@@ -129,5 +129,8 @@
 	"common.retry": "Erneut versuchen",
 	"common.save": "Speichern",
 	"common.cancel": "Abbrechen",
+	"a11y.skipToContent": "Zum Inhalt springen",
+	"dashboard.items.tableCaption": "Kampagnen",
+	"dashboard.items.pagination": "Kampagnen-Seitennummerierung",
 	"footer.copy": "© 2026 Demo Co."
 }

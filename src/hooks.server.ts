@@ -9,15 +9,17 @@ import {
 	translations
 } from '$lib/i18n';
 import { readSessionUser } from '$lib/server/session';
-import { classifyLocaleSegment, resolveLocaleRouting } from '$lib/utils';
+import { classifyLocaleSegment, resolveLocaleRouting } from '$lib/utils/matchers';
 
 const META_PATHS = new Set(['/sitemap.xml', '/robots.txt']);
 
+/** Resolve locale, session locals, and html lang for every non-meta request. */
 export const handle: Handle = async ({ event, resolve }) => {
 	const { url, request, cookies } = event;
 	const { pathname } = url;
 
-	if (META_PATHS.has(pathname)) {
+	// API routes live outside the locale segment; skip locale routing entirely.
+	if (META_PATHS.has(pathname) || pathname.startsWith('/api/')) {
 		return resolve(event);
 	}
 
@@ -38,10 +40,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.user = user;
 
 	return resolve(event, {
-		transformPageChunk: ({ html }) => html.replace(/<html[^>]*>/, `<html lang="${lang}">`)
+		transformPageChunk: ({ html }) =>
+			html
+				.replace(/<html[^>]*>/, `<html lang="${lang}">`)
+				// Drop modulepreloads so CSS/fonts win the bandwidth race on slow mobile (LCP).
+				.replace(/<link[^>]*rel="modulepreload"[^>]*>/g, '')
 	});
 };
 
+/** Load error-page translations and return a localized error payload. */
 export const handleError: HandleServerError = async ({ error, event, message }) => {
 	console.error(error);
 

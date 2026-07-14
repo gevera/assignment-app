@@ -4,17 +4,13 @@
 	import { page } from '$app/state';
 	import { match, P } from 'ts-pattern';
 	import { Dialog, Input, Toggle } from '$ui';
-	import { AuthorAvatar } from '$lib/components/blog';
-	import {
-		closeSearchDialog,
-		filtersToQuery,
-		openSearchDialog,
-		syncSearchDialogUrl
-	} from '$lib/search/dialog';
+	import AuthorAvatar from './AuthorAvatar.svelte';
+	import { closeSearchDialog, filtersToQuery, syncSearchDialogUrl } from '$lib/search/dialog';
 	import { DEFAULT_LOCALE, isLocale, localizedPath, t } from '$lib/i18n';
 	import type { Post } from '$lib/schemas';
-	import { formatDate, searchKeyCommand } from '$lib/utils';
-	import { postsQueryPath, type PostsQuery } from '$lib/utils/posts-query';
+	import { formatDate } from '$lib/utils/format';
+	import { searchKeyCommand } from '$lib/utils/matchers';
+	import { postsQueryPath, type PostsQuery } from '$lib/utils/posts-query-path';
 
 	type SearchResponse = {
 		posts: Post[];
@@ -68,6 +64,7 @@
 		return () => clearTimeout(debounceId);
 	});
 
+	/** Fetches search results from the posts API and updates the dialog state. */
 	async function fetchResults(query: PostsQuery, id: number) {
 		try {
 			const path = resolve(postsQueryPath({ lang, query }));
@@ -87,18 +84,22 @@
 		}
 	}
 
+	/** Closes the search dialog. */
 	function onClose() {
 		closeSearchDialog();
 	}
 
+	/** Navigates to the blog post with the given slug. */
 	function selectPost(slug: string) {
 		void goto(localizedPath({ lang, path: `/blog/${slug}` }));
 	}
 
+	/** Clears the active tag filter. */
 	function clearTag() {
 		tag = '';
 	}
 
+	/** Extracts tag name and role from an event target for keyboard handling. */
 	function searchTargetInfo(target: EventTarget | null) {
 		return match(target)
 			.with(P.instanceOf(Element), (el) => ({
@@ -108,22 +109,21 @@
 			.otherwise(() => ({}));
 	}
 
+	/** Handles global keyboard shortcuts and navigation within search results. */
 	function onWindowKeydown(event: KeyboardEvent) {
+		if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') return;
+
 		match(
 			searchKeyCommand({
 				key: event.key,
-				ctrlOrMeta: event.ctrlKey || event.metaKey,
+				ctrlOrMeta: false,
 				open,
 				activeIndex,
 				length: posts.length,
 				target: searchTargetInfo(event.target)
 			})
 		)
-			.with({ kind: 'toggle' }, () => {
-				event.preventDefault();
-				if (open) onClose();
-				else openSearchDialog();
-			})
+			.with({ kind: 'toggle' }, () => undefined)
 			.with({ kind: 'focus', index: P.select() }, (index) => {
 				event.preventDefault();
 				activeIndex = index;
@@ -149,7 +149,7 @@
 		<div class="flex items-center gap-2 border-b border-border px-3 py-2">
 			<Input
 				type="search"
-				class="border-0 bg-transparent shadow-none focus-visible:ring-0"
+				class="border-0 bg-transparent shadow-none focus-visible:ring-2 focus-visible:ring-focus/40"
 				placeholder={$t('i18n.search.placeholder')}
 				bind:value={q}
 				aria-label={$t('i18n.search.placeholder')}

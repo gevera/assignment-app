@@ -10,6 +10,7 @@ import {
 import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 
+/** Redirect signed-in users away from the login page. */
 export const load: PageServerLoad = async ({ locals, params, url }) => {
 	if (locals.user) {
 		const { lang } = params;
@@ -23,7 +24,9 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
 	return {};
 };
 
+/** Login and logout form actions. */
 export const actions: Actions = {
+	/** Authenticate credentials, set the session cookie, and redirect. */
 	login: async ({ request, cookies, params, url }) => {
 		const formData = await request.formData();
 		const values = {
@@ -66,6 +69,7 @@ export const actions: Actions = {
 		redirect(303, redirectTo);
 	},
 
+	/** Clear the session cookie and send the user back to login. */
 	logout: async ({ cookies, params }) => {
 		clearSessionCookie(cookies);
 		const { lang } = params;

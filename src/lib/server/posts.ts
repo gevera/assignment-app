@@ -25,14 +25,17 @@ export type PagedPosts = {
 	pageCount: number;
 };
 
+/** Return every post from the in-memory data store. */
 export function getAllPosts(): Post[] {
 	return getPosts();
 }
 
+/** Look up a single post by its slug. */
 export function getPostBySlug(slug: string): Post | undefined {
 	return getPosts().find((post) => post.slug === slug);
 }
 
+/** Build localized tag text used for fuzzy search matching. */
 function tagSearchText({ post, lang }: { post: Post; lang: Locale }): string {
 	const tags = getAllTags();
 	return post.tags
@@ -43,6 +46,7 @@ function tagSearchText({ post, lang }: { post: Post; lang: Locale }): string {
 		.join(' ');
 }
 
+/** Sort posts by date, localized title, or relevance fallback. */
 function sortPosts({
 	posts,
 	sort,
@@ -63,6 +67,7 @@ function sortPosts({
 		.exhaustive();
 }
 
+/** Return whether the post title, excerpt, or tags contain the needle. */
 function matchesSubstring({
 	post,
 	needle,
@@ -84,6 +89,7 @@ function matchesSubstring({
 	});
 }
 
+/** Filter, search, and optionally limit posts for the search API. */
 export function queryPosts(input: PostsQuery & { lang: Locale }): QueryPostsResult {
 	const lang = input.lang;
 	let rows = [...getPosts()];
@@ -135,6 +141,7 @@ export function queryPosts(input: PostsQuery & { lang: Locale }): QueryPostsResu
 	return { posts, total };
 }
 
+/** Return a sorted, tag-filtered page of posts for the blog listing. */
 export function listPosts(input: BlogQuery & { lang: Locale }): PagedPosts {
 	let rows = [...getPosts()];
 

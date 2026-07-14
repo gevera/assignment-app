@@ -1,10 +1,7 @@
+import type { ParamMatcher } from '@sveltejs/kit';
 import { isLocale } from '$lib/i18n';
 
-/**
- * @param {string} param
- * @return {param is ('en' | 'de')}
- * @satisfies {import('@sveltejs/kit').ParamMatcher}
- */
-export function match(param) {
+/** Match a supported locale path param. */
+export const match = ((param: string): param is 'en' | 'de' => {
 	return isLocale(param);
-}
+}) satisfies ParamMatcher;

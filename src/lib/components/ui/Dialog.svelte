@@ -41,6 +41,7 @@
 		};
 	});
 
+	/** Returns all focusable elements within the dialog panel. */
 	function focusableElements(): HTMLElement[] {
 		if (!panelEl) return [];
 		return [...panelEl.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
@@ -48,6 +49,7 @@
 		);
 	}
 
+	/** Handles Escape to close and traps Tab focus within the dialog. */
 	function onKeydown(event: KeyboardEvent) {
 		if (!open) return;
 

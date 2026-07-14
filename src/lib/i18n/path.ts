@@ -2,10 +2,12 @@ import { DEFAULT_LOCALE } from './locales';
 
 export const LOCALE_PATTERN = /^[a-z]{2}(-[a-z]{2})?$/i;
 
+/** Return the first non-empty segment of a pathname, lowercased. */
 export function getFirstPathSegment(pathname: string): string | undefined {
 	return pathname.match(/[^/]+?(?=\/|$)/)?.[0]?.toLowerCase();
 }
 
+/** Return whether the segment is one of the supported locale codes. */
 export function isSupportedLocale({
 	segment,
 	supported
@@ -16,6 +18,7 @@ export function isSupportedLocale({
 	return Boolean(segment && supported.includes(segment));
 }
 
+/** Pick a preferred locale from Accept-Language, falling back to the default. */
 export function preferredLocale({
 	request,
 	supported

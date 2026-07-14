@@ -9,6 +9,7 @@
 		theme = readDocumentTheme();
 	});
 
+	/** Switches between light and dark theme. */
 	function handleToggle() {
 		if (theme === null) return;
 		theme = toggleTheme(theme);

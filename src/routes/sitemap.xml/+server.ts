@@ -5,6 +5,7 @@ import { buildSitemapXml } from '$lib/seo/sitemap';
 
 export const prerender = true;
 
+/** Serve the multilingual XML sitemap for home, blog, and posts. */
 export const GET: RequestHandler = () => {
 	const posts = getAllPosts();
 

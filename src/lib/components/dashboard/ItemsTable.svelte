@@ -4,8 +4,10 @@
 	import { page } from '$app/state';
 	import { ItemsColumnHeader, ItemsTableRow } from '$lib/components/dashboard';
 	import { ITEMS_COLUMNS } from '$lib/components/dashboard/columns';
+	import { t } from '$lib/i18n';
 	import type { Item } from '$lib/schemas';
-	import { itemsQueryPath, nextSortDirection, type ItemsQuery, type ItemsSort } from '$lib/utils';
+	import { itemsQueryPath, type ItemsQuery, type ItemsSort } from '$lib/utils/items-query';
+	import { nextSortDirection } from '$lib/utils/matchers';
 
 	type Props = {
 		items: Item[];
@@ -22,6 +24,7 @@
 	const dateLocale = $derived(locale === 'de' ? 'de-DE' : 'en-GB');
 	const lang = $derived(page.params.lang ?? 'en');
 
+	/** Navigates to the same page with updated sort column and direction. */
 	function toggleSort(key: ItemsSort) {
 		const dir = nextSortDirection({ sort: query.sort, dir: query.dir, key });
 		const next: ItemsQuery = { ...query, sort: key, dir, page: 1 };
@@ -34,6 +37,7 @@
 
 <div class="overflow-x-auto">
 	<table class="w-full border-collapse text-[13px]">
+		<caption class="sr-only">{$t('i18n.dashboard.items.tableCaption')}</caption>
 		<thead>
 			<tr>
 				{#each ITEMS_COLUMNS as column (column.key)}

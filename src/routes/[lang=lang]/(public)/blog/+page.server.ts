@@ -11,6 +11,7 @@ export const config: Config = {
 	isr: { expiration: 300 }
 };
 
+/** Load a paginated blog listing with tags for the toolbar. */
 export const load: PageServerLoad = ({ url, params, depends }) => {
 	depends('app:posts');
 	depends('app:tags');

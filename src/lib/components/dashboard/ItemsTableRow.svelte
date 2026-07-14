@@ -14,6 +14,7 @@
 
 	let { item, canEdit, numberLocale, dateLocale, onEditError }: Props = $props();
 
+	/** Derives up to two initials from an owner name. */
 	function ownerInitials(name: string): string {
 		return name
 			.split(' ')
