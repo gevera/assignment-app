@@ -10,6 +10,7 @@ import {
 } from '$lib/i18n';
 import { readSessionUser } from '$lib/server/session';
 import { classifyLocaleSegment, resolveLocaleRouting } from '$lib/utils/matchers';
+import { transformPageHtml } from '$lib/utils/transform-page-html';
 
 const META_PATHS = new Set(['/sitemap.xml', '/robots.txt']);
 
@@ -40,23 +41,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.user = user;
 
 	return resolve(event, {
-		transformPageChunk: ({ html }) => {
-			let next = html
-				.replace(/<html[^>]*>/, `<html lang="${lang}">`)
-				// Drop modulepreloads so CSS wins the bandwidth race on slow mobile (LCP).
-				.replace(/<link[^>]*rel="modulepreload"[^>]*>/g, '');
-
-			// Apply the full stylesheet without blocking first paint — critical CSS in
-			// app.html paints LCP text immediately.
-			next = next.replace(/<link\b[^>]*>/gi, (tag) => {
-				if (!/\brel=["']stylesheet["']/i.test(tag)) return tag;
-				const href = /\bhref=["']([^"']+)["']/i.exec(tag)?.[1];
-				if (!href?.includes('.css')) return tag;
-				return `<link rel="preload" href="${href}" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="${href}"></noscript>`;
-			});
-
-			return next;
-		}
+		transformPageChunk: ({ html }) => transformPageHtml({ html, lang })
 	});
 };
 
