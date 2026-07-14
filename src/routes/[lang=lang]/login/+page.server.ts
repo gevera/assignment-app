@@ -1,3 +1,4 @@
+import type { Config } from '@sveltejs/adapter-vercel';
 import { fail, redirect } from '@sveltejs/kit';
 import { loginSchema } from '$lib/schemas';
 import {
@@ -9,6 +10,11 @@ import {
 } from '$lib/server';
 import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
+
+export const config: Config = {
+	runtime: 'nodejs24.x',
+	split: true
+};
 
 /** Redirect signed-in users away from the login page. */
 export const load: PageServerLoad = async ({ locals, params, url }) => {

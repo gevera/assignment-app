@@ -1,5 +1,11 @@
+import type { Config } from '@sveltejs/adapter-vercel';
 import type { RequestHandler } from './$types';
 import { beaconPayloadSchema } from '$lib/schemas';
+
+export const config: Config = {
+	runtime: 'edge',
+	split: true
+};
 
 /**
  * RUM + error beacon. Accepts navigator.sendBeacon blobs and fetch-keepalive

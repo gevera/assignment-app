@@ -8,6 +8,8 @@ import { parseBlogQuery } from '$lib/utils/posts-query';
 export const prerender = false;
 
 export const config: Config = {
+	runtime: 'nodejs24.x',
+	split: true,
 	isr: { expiration: 300 }
 };
 

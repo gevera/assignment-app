@@ -1,7 +1,13 @@
+import type { Config } from '@sveltejs/adapter-vercel';
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
 export const prerender = false;
+
+export const config: Config = {
+	runtime: 'nodejs24.x',
+	split: true
+};
 
 /** Require a session and expose the authenticated user to dashboard routes. */
 export const load: LayoutServerLoad = async ({
