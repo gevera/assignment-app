@@ -70,13 +70,10 @@ jobs:
         run: pnpm test:e2e
         env:
           CI: true
-      - name: Install Chrome for Lighthouse
-        run: |
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
-          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+      - name: Resolve Chromium path for Lighthouse
+        id: chromium-path
+        run: echo "path=$(node -e "console.log(require('playwright').chromium.executablePath())")" >> "$GITHUB_OUTPUT"
       - name: Lighthouse CI
         run: pnpm lhci
         env:
-          CHROME_PATH: /usr/bin/google-chrome-stable
+          CHROME_PATH: ${{ steps.chromium-path.outputs.path }}
