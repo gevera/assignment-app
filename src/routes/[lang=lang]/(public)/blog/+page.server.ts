@@ -10,7 +10,10 @@ export const prerender = false;
 export const config: Config = {
 	runtime: 'nodejs24.x',
 	split: true,
-	isr: { expiration: 300 }
+	isr: {
+		expiration: 300,
+		allowQuery: ['tag', 'sort', 'page']
+	}
 };
 
 /** Load a paginated blog listing with tags for the toolbar. */
