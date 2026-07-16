@@ -107,16 +107,13 @@
 			<div class="ml-auto flex shrink-0 items-center gap-1">
 				<div class="mr-4">
 					{#if user}
-						<form method="POST" action={logoutAction} use:enhance class="hidden sm:contents">
+						<form method="POST" action={logoutAction} use:enhance>
 							<Button variant="ghost" type="submit" class="w-29 cursor-pointer">
 								{$t('i18n.nav.logout')}
 							</Button>
 						</form>
 					{:else}
-						<Button
-							href={localizedPath({ lang, path: '/login' })}
-							class="hidden w-29 sm:inline-flex"
-						>
+						<Button href={localizedPath({ lang, path: '/login' })} class="w-29">
 							{$t('i18n.nav.login')}
 						</Button>
 					{/if}
@@ -180,20 +177,6 @@
 						</Button>
 					</li>
 				</ul>
-
-				<div class="flex justify-center border-t border-border px-page py-3 sm:hidden">
-					{#if user}
-						<form method="POST" action={logoutAction} use:enhance>
-							<Button variant="ghost" type="submit">
-								{$t('i18n.nav.logout')}
-							</Button>
-						</form>
-					{:else}
-						<Button href={localizedPath({ lang, path: '/login' })} onclick={closeMenu}>
-							{$t('i18n.nav.login')}
-						</Button>
-					{/if}
-				</div>
 			</div>
 		</div>
 	</Container>
